@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'KampUs',
       theme: ThemeData(
 
         primaryColor: Color.fromARGB(255, 139, 0, 2),
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getLocation() async {
-    var currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    Position currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
 
     setState(() {
       _markers.clear();
@@ -92,13 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 11.0,
-          ),
-
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: _center,
+          zoom: 11.0,
+        ),
+        markers: _markers.values.toSet(),
       ),
+      
 
       floatingActionButton: FloatingActionButton(
         onPressed: _getLocation,
