@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kamp_us/splash.dart';
+import 'package:kamp_us/loggin_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget {
         ),
 
       ),
-      home: SplashScreen()//MyHomePage(title: 'KampUs'),
+      home: SplashScreen(),//MyHomePage(title: 'KampUs'),
+      
 
     );
   }
