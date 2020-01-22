@@ -25,7 +25,9 @@ class MyApp extends StatelessWidget {
 
       ),
       home: SplashScreen()//MyHomePage(title: 'KampUs'),
+
     );
   }
+
 }
 
