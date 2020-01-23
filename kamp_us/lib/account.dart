@@ -1,4 +1,7 @@
+import 'package:kamp_us/models.dart';
 import 'package:password_hash/password_hash.dart';
+
+// DODAĆ SZYFROWANIE HASEŁ !!!!!
 
 class Account {
     static final PBKDF2 _generator = new PBKDF2();
@@ -7,9 +10,12 @@ class Account {
     String _email;
     String _passwd;
 
-    Account.login(this._email, String passwd, [this._nickname]) {
-      _passwd = _generator.generateKey(_passwd, _salt, 1000, 32);
+    Account.login(this._email, this._passwd, [this._nickname]);
+    Account.model( AccountModel model )
+    {
+      _nickname = model.nickname;
+      _email = model.email;
+      _passwd = model.passwd;
     }
-    Account.model(accoun)
 
 }

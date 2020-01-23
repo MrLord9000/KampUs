@@ -9,12 +9,16 @@ class DataBase {
 
   connect() async {
     _connection = await MySqlConnection.connect(
-      ConnectionSettings(
-        host: 'db4free.net',
-        port: 3306,
+       ConnectionSettings(
+      //   host: 'db4free.net',
+      //   port: 3306,
+      //   db: 'mobilki2019test',
+      //   user: 'temmie',
+      //   password: "temmievillage"
+        host: 'localhost',
         db: 'mobilki2019test',
-        user: 'temmie',
-        password: "temmievillage"
+        user: 'user',
+        password: ""
       )
     );
   }
