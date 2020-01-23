@@ -26,7 +26,7 @@ class _MyRegisterPage extends State<MyRegisterPage> {
             content: new Text(string),
             actions: <Widget>[
               new FlatButton(
-                child: new Text('Go to main screen'),
+                child: new Text('Idź do głównego ekranu'),
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS')));
 
@@ -61,7 +61,7 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration:InputDecoration(
-                  labelText: 'PASSWORD',
+                  labelText: 'HASŁO',
                 )
             ),
             SizedBox(height: 30.0),
@@ -76,11 +76,11 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                     onTap: () {
                       //Kod do sprawdzania czy udało się zalogować
                       //_emailController.text == ''
-                      alertDialogPopUp('Thanks for registering, please activate your account via link in email');
+                      alertDialogPopUp('Dziękujemy za rejestrację, link do aktywacji został wysłany na podany adres email');
 
                     },
                     child: Center(
-                      child: Text('Register new account',
+                      child: Text('Zarejestruj',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,
