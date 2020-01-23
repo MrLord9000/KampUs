@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 void openPageUstawienia(BuildContext context) {
+
   Navigator.push(context, MaterialPageRoute(
     builder: (BuildContext context) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Ustawienia'),
+          title: const Text('Setting'),
         ),
-        body: const Center(
-          child: Text(
-            'Tutaj beda ustawienia',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
+        body: Container (
+          padding: new EdgeInsets.all(32.0),
+          child: new Center(
+              child: new Text (
+                'Tutaj beda ustawienia',
+                style: TextStyle(fontSize: 24),
+              )
+          )
+        )
       );
     },
   ));
@@ -25,7 +30,7 @@ void openPageUlubione(BuildContext context) {
     builder: (BuildContext context) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Ulubione'),
+          title: const Text('Favourites'),
         ),
         body: const Center(
           child: Text(
@@ -90,15 +95,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
 
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 11.0,
-        ),
-        markers: _markers.values.toSet(),
+      body: Stack(
+        children: <Widget>[
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 11.0,
+            ),
+            markers: _markers.values.toSet(),
 
 
+          ),
+
+          SlidingUpPanel(
+            panel: Center(
+              child: Text('markers')
+            )
+          )
+        ],
       ),
 
 
@@ -110,18 +125,18 @@ class _MyHomePageState extends State<MyHomePage> {
             DrawerHeader(
               child: Text('KampUs'),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: Color.fromARGB(255, 139, 0, 2),
               ),
             ),
             ListTile(
-                title: Text('Ustawienia'),
+                title: Text('Setting'),
                 onTap:() {
                   //tutaj otwarcie nowego okna
                   openPageUstawienia(context);
                 }
             ),
             ListTile(
-              title: Text('Ulubione'),
+              title: Text('Favourites'),
               onTap: () {
                 openPageUlubione(context);
               },
@@ -131,11 +146,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
+
+
       floatingActionButton: FloatingActionButton(
         onPressed: _getLocation,
         tooltip: 'Get Location',
         child: Icon(Icons.flag),
       ),
+
     );
   }
 }

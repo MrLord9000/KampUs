@@ -10,8 +10,6 @@ class MyLoggingPage extends StatefulWidget {
   _MyLoggingPage createState() => _MyLoggingPage();
 }
 
-
-
 class _MyLoggingPage extends State<MyLoggingPage> {
 
   final _emailController = TextEditingController();
@@ -35,6 +33,58 @@ class _MyLoggingPage extends State<MyLoggingPage> {
       }
     );
   }
+
+  void forgotPassword(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Favourites'),
+          ),
+          body: Container (
+              padding: EdgeInsets.only(top: 35.0, left: 20.0, right:20.0),
+            child: Column (
+              children: <Widget>[
+                TextField(
+                    controller: _emailController,
+                    decoration:InputDecoration(
+                      labelText: 'EMAIL',
+
+                    )
+                ),
+                SizedBox(height: 30.0),
+                Container (
+                  height: 40.0,
+                  alignment: Alignment.centerRight,
+                  child: Material(
+                    borderRadius: BorderRadius.horizontal(),
+                    color: Color.fromARGB(255, 139, 0, 2),
+                    elevation: 10.0,
+                    child: GestureDetector(
+                        onTap: () {
+                          //Kod do sprawdzania czy udało się zalogować
+                          wrongLoginData("Thank you for sending the information, instruction will be sent to you by email");
+
+                        },
+                        child: Center(
+                          child: Text('Sent on this email',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        )
+                    ),
+                  ),
+                ),
+              ],
+            )
+          )
+        );
+      },
+    ));
+  }
+
 
   void cleanField() {
     _emailController.dispose();
@@ -62,6 +112,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
             ),
             TextField(
               controller: _passwordController,
+              obscureText: true,
               decoration:InputDecoration(
                 labelText: 'PASSWORD',
               )
@@ -70,15 +121,22 @@ class _MyLoggingPage extends State<MyLoggingPage> {
             Container(
               alignment: Alignment.centerRight,
               padding: EdgeInsets.only(top: 15.0, left: 20.0),
-              child: InkWell(
-                child: Text('Forgot Password',
-                style: TextStyle(
-                  color: Colors.deepOrange,
-                  decoration: TextDecoration.underline,
-                  ),
+              child: Material(
+                child: GestureDetector(
+                  onTap: () {
+                    forgotPassword(context);
+                  },
+                    child: Text('Forgot Password',
+                      style: TextStyle(
+                        color: Colors.deepOrange,
+                        decoration: TextDecoration.underline,
+                      ),
 
-                )
+                    )
+                ),
+
               )
+
             ),
             SizedBox(height: 30.0),
             Container (

@@ -59,6 +59,7 @@ class _MyRegisterPage extends State<MyRegisterPage> {
             ),
             TextField(
                 controller: _passwordController,
+                obscureText: true,
                 decoration:InputDecoration(
                   labelText: 'PASSWORD',
                 )
