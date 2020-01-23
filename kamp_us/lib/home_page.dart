@@ -95,11 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
 
-
-
       drawer: SideMenu(),
-
-
+      
       floatingActionButton: FloatingActionButton(
         onPressed: _centerPosition,
         tooltip: 'Center Position',
