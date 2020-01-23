@@ -96,34 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('KampUs'),
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 139, 0, 2),
-              ),
-            ),
-            ListTile(
-                title: Text('Setting'),
-                onTap:() {
-                  //tutaj otwarcie nowego okna
-                  openPageUstawienia(context);
-                }
-            ),
-            ListTile(
-              title: Text('Favourites'),
-              onTap: () {
-                openPageUlubione(context);
-              },
-            ),
-
-          ],
-        ),
-      ),
-
+      drawer: SideMenu(),
 
 
       floatingActionButton: FloatingActionButton(
