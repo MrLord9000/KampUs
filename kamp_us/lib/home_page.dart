@@ -11,8 +11,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  // int _counter = 0;
+class _MyHomePageState extends State<MyHomePage> { 
+
   GoogleMapController mapController;
   final LatLng _center = const LatLng(45.521563, -122.677433);
   final Map<String, Marker> _markers = {};
@@ -38,6 +38,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    dbTest();
+    
     return Scaffold(
       appBar: AppBar(
         
