@@ -47,7 +47,7 @@ class SideMenu extends StatelessWidget {
             DrawerHeader(
               child: Text('KampUs'),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: Theme.of(context).primaryColor,
               ),
             ),
             ListTile(
