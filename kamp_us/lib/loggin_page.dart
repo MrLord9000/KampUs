@@ -39,7 +39,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
       builder: (BuildContext context) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Favourites'),
+            title: const Text('Zamoniałeś hasła'),
           ),
           body: Container (
               padding: EdgeInsets.only(top: 35.0, left: 20.0, right:20.0),
@@ -63,11 +63,11 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                     child: GestureDetector(
                         onTap: () {
                           //Kod do sprawdzania czy udało się zalogować
-                          wrongLoginData("Thank you for sending the information, instruction will be sent to you by email");
+                          wrongLoginData("Dziękujemy za zgłoszenie, instrukcje będą wysłane na adres email");
 
                         },
                         child: Center(
-                          child: Text('Sent on this email',
+                          child: Text('Wyślij na ten adres email',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
@@ -114,7 +114,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
               controller: _passwordController,
               obscureText: true,
               decoration:InputDecoration(
-                labelText: 'PASSWORD',
+                labelText: 'HASŁO',
               )
             ),
             SizedBox(height: 5.0),
@@ -126,7 +126,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                   onTap: () {
                     forgotPassword(context);
                   },
-                    child: Text('Forgot Password',
+                    child: Text('ZAPOMNIAŁES HASŁA?',
                       style: TextStyle(
                         color: Colors.deepOrange,
                         decoration: TextDecoration.underline,
@@ -152,10 +152,10 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                     if (_emailController.text == 'email' && _passwordController.text == 'haslo')
                       Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS')));
                     else if(_emailController.text != 'email') {
-                      wrongLoginData('No such email, try again');
+                      wrongLoginData('Nie ma takiego adresu');
                     }
                     else if (_passwordController != 'haslo') {
-                      wrongLoginData('Wrong password, try again');
+                      wrongLoginData('Błędne hasło');
                     }
                     else {
                       wrongLoginData('You missed it, uh oh');
@@ -163,7 +163,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
 
                   },
                   child: Center(
-                    child: Text('Login',
+                    child: Text('Zaloguj',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
@@ -187,7 +187,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) =>MyRegisterPage(title: 'KampUS')));
                   },
                     child: Center(
-                      child: Text('Register',
+                      child: Text('Zarejestruj',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,
