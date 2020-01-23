@@ -1,52 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-<<<<<<< HEAD
 import 'add_marker.dart';
 import 'side_menu.dart';
-=======
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-void openPageUstawienia(BuildContext context) {
-
-  Navigator.push(context, MaterialPageRoute(
-    builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Setting'),
-        ),
-        body: Container (
-          padding: new EdgeInsets.all(32.0),
-          child: new Center(
-              child: new Text (
-                'Tutaj beda ustawienia',
-                style: TextStyle(fontSize: 24),
-              )
-          )
-        )
-      );
-    },
-  ));
-}
-
-void openPageUlubione(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(
-    builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Favourites'),
-        ),
-        body: const Center(
-          child: Text(
-            'Tutaj beda ulubione lokacje',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      );
-    },
-  ));
-}
->>>>>>> 91cdccbc4602eb126592106972da2831ebd42f32
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
