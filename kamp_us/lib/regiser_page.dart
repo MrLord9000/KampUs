@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kamp_us/dataBase.dart';
 import 'package:kamp_us/home_page.dart';
+import 'package:mysql1/mysql1.dart';
 
 class MyRegisterPage extends StatefulWidget {
   MyRegisterPage({Key key, this.title}) : super(key: key);
@@ -73,11 +75,10 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                 color: Color.fromARGB(255, 139, 0, 2),
                 elevation: 10.0,
                 child: GestureDetector(
-                    onTap: () {
-                      //Kod do sprawdzania czy udało się zalogować
-                      //_emailController.text == ''
+                    onTap: () async {
+                      await DataBase().querry("INSERT INTO `accounts` (`email`,`password`) VALUES (?,?)",
+                        [_emailController.text,_passwordController.text]);
                       alertDialogPopUp('Dziękujemy za rejestrację, link do aktywacji został wysłany na podany adres email');
-
                     },
                     child: Center(
                       child: Text('Zarejestruj',
