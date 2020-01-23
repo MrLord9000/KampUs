@@ -1,42 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-
-void openPageUstawienia(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(
-    builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Ustawienia'),
-        ),
-        body: const Center(
-          child: Text(
-            'Tutaj beda ustawienia',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      );
-    },
-  ));
-}
-
-void openPageUlubione(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(
-    builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Ulubione'),
-        ),
-        body: const Center(
-          child: Text(
-            'Tutaj beda ulubione lokacje',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      );
-    },
-  ));
-}
+import 'add_marker.dart';
+import 'side_menu.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -57,18 +24,35 @@ class _MyHomePageState extends State<MyHomePage> {
     mapController = controller;
   }
 
-  void _getLocation() async {
+  void _centerPosition() async {
     Position currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
 
     setState(() {
-      _markers.clear();
-      final marker = Marker(
-          markerId: MarkerId("curr_loc"),
-          position: LatLng(currentLocation.latitude, currentLocation.longitude),
-          infoWindow: InfoWindow(title: 'Your Location'),
-      );
-      _markers["Current Location"] = marker;
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(currentLocation.latitude, currentLocation.longitude),
+            zoom: 11.0
+            )
+          )
+        );
+      // _markers.clear();
+      // final marker = Marker(
+      //     markerId: MarkerId("curr_loc"),
+      //     position: LatLng(currentLocation.latitude, currentLocation.longitude),
+      //     infoWindow: InfoWindow(title: 'Your Location'),
+      // );
+      // _markers["Current Location"] = marker;
     });
+
+  }
+
+  void _onCreateMarker(LatLng latLng) {
+
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => AddMarkerPage(),
+      )
+    );
 
   }
 
@@ -84,57 +68,44 @@ class _MyHomePageState extends State<MyHomePage> {
             tooltip: 'Show menu',
             alignment: Alignment.center,
             onPressed: () {
-
+              Scaffold.of(context).openDrawer();
             },
           ),
 
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 11.0,
-        ),
-        markers: _markers.values.toSet(),
+      body: Stack(
+        children: <Widget>[
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 11.0,
+            ),
+            markers: _markers.values.toSet(),
+            compassEnabled: true,
+            onLongPress: _onCreateMarker,
 
+          ),
 
+          SlidingUpPanel(
+            panel: Center(
+              child: Text('markers')
+            )
+          )
+        ],
       ),
 
 
 
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('KampUs'),
-              decoration: BoxDecoration(
-                color: Colors.red,
-              ),
-            ),
-            ListTile(
-                title: Text('Ustawienia'),
-                onTap:() {
-                  //tutaj otwarcie nowego okna
-                  openPageUstawienia(context);
-                }
-            ),
-            ListTile(
-              title: Text('Ulubione'),
-              onTap: () {
-                openPageUlubione(context);
-              },
-            ),
+      drawer: SideMenu(),
 
-          ],
-        ),
-      ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _getLocation,
-        tooltip: 'Get Location',
-        child: Icon(Icons.flag),
+        onPressed: _centerPosition,
+        tooltip: 'Center Position',
+        child: Icon(Icons.my_location),
       ),
+
     );
   }
 }
