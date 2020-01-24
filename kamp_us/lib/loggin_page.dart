@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kamp_us/home_page.dart';
 import 'package:kamp_us/regiser_page.dart';
+import 'package:kamp_us/api.dart';
 
 
 class MyLoggingPage extends StatefulWidget {
@@ -21,19 +22,19 @@ class _MyLoggingPage extends State<MyLoggingPage> {
       return AlertDialog(
         content: new Text(string),
         actions: <Widget>[
-         new FlatButton(
-           child: new Text('Close'),
-           onPressed: () {
-             Navigator.of(context).pop();
-           },
-         )
+          new FlatButton(
+            child: new Text('Close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
         ],
       );
 
       }
     );
   }
-
+  
   void forgotPassword(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
@@ -148,6 +149,15 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                 elevation: 10.0,
                 child: GestureDetector(
                   onTap: () {
+
+                    logIn(
+                      _emailController.text,
+                      _passwordController.text,
+                      () => Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS'))),
+                      wrongLoginData
+                    );
+
+                    /*
                       //Kod do sprawdzania czy udało się zalogować
                     if (_emailController.text == 'email' && _passwordController.text == 'haslo')
                       Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS')));
@@ -160,6 +170,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                     else {
                       wrongLoginData('You missed it, uh oh');
                     }
+                    */
 
                   },
                   child: Center(
