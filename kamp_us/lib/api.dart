@@ -3,13 +3,15 @@ import 'dart:io';
 import 'package:kamp_us/dataBase.dart';
 import 'package:mysql1/mysql1.dart';
 
-  const ER_DUP_ENTRY = 1062;
+class API
+{
+  static const ER_DUP_ENTRY = 1062;
 
-  String _unknownErrorLog( String errorLog ) {
+  static String _unknownErrorLog( String errorLog ) {
     return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
   }
 
-  logIn( String email, String password, Function ifSuccess, Function ifFailure ) async {
+  static logIn( String email, String password, Function ifSuccess, Function ifFailure ) async {
     try
     {
       Results result = await DataBase().querry(
@@ -48,7 +50,7 @@ import 'package:mysql1/mysql1.dart';
     }
   }
 
-  createAccount( String email, String password, Function ifSuccess, Function ifFailure ) async {
+  static createAccount( String email, String password, Function ifSuccess, Function ifFailure ) async {
     try
     {
       await DataBase().querry(
@@ -79,3 +81,4 @@ import 'package:mysql1/mysql1.dart';
     }
 
   }
+}

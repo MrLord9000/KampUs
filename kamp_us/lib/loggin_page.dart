@@ -150,7 +150,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                 child: GestureDetector(
                   onTap: () {
 
-                    logIn(
+                    API.logIn(
                       _emailController.text,
                       _passwordController.text,
                       () => Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS'))),

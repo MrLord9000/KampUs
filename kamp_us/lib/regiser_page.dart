@@ -76,22 +76,22 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                 child: GestureDetector(
                     onTap: () async {
 
-                      createAccount(
-                        _emailController.text,
-                        _passwordController.text,
-                        alertDialogPopUp, 
-                        alertDialogPopUp
-                      );
+                    API.createAccount(
+                      _emailController.text,
+                      _passwordController.text,
+                      alertDialogPopUp, 
+                      alertDialogPopUp
+                    );
 
-                    },
-                    child: Center(
-                      child: Text('Zarejestruj',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                        ),
+                  },
+                  child: Center(
+                    child: Text('Zarejestruj',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
                       ),
-                    )
+                    ),
+                  )
                 ),
 
               ),
