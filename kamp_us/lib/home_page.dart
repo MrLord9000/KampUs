@@ -48,6 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onCreateMarker(LatLng latLng) {
+    
+    setState(() {
+      final newMarker = Marker(
+        markerId: MarkerId("new_marker"),
+        position: latLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
+      );
+      _markers["New Marker"] = newMarker;
+    });
 
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => AddMarkerPage(),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'model/place.dart';
+
 
 class AddMarkerPage extends StatefulWidget {
   AddMarkerPage({Key key, this.latLng}) : super(key: key);
 
-  LatLng latLng;
-  Place place;
+  final LatLng latLng;
 
   @override
   _AddMarkerPageState createState() => _AddMarkerPageState();
@@ -14,6 +13,7 @@ class AddMarkerPage extends StatefulWidget {
 
 class _AddMarkerPageState extends State<AddMarkerPage> {
 
+  
   final _placeNameController = TextEditingController();
   final _placeDescriptionController = TextEditingController();
   final _tagController = TextEditingController();
@@ -31,7 +31,11 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
       ),
       body: Column(
         children: <Widget>[
-          
+        
+        GoogleMap(
+          initialCameraPosition: CameraPosition(target: widget.latLng),
+        ),
+
         Container(
           padding: EdgeInsets.all(16.0),
           child: Column(
