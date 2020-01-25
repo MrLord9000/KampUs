@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kamp_us/home_page.dart';
 import 'package:kamp_us/regiser_page.dart';
 import 'package:kamp_us/api.dart';
+import 'package:kamp_us/api.dart';
+import 'package:kamp_us/view_models/location.dart';
 
 
 class MyLoggingPage extends StatefulWidget {
@@ -94,6 +96,14 @@ class _MyLoggingPage extends State<MyLoggingPage> {
   }
 
   Widget build (BuildContext context) {
+    Location l = new Location( id: 2 );
+    API.load(l, ()=>print("ok"), (str)=>print(str)).then( 
+      (l) => {
+        print(l.name),
+        print(l.accountNickname),
+        print(l.comments.length)
+      }
+    );
     return Scaffold (
       appBar: AppBar(
         title: Text(widget.title),

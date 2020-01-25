@@ -25,7 +25,7 @@ class DataBase {
     _connection.then( (con) => con.close() );
   }
 
-  Future<Results> querry( String sql, List args ) async {
+  Future<Results> query( String sql, List args ) async {
     return _connection.then( (con) => con.query(sql,args) );
   }
 }

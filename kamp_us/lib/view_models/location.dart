@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kamp_us/models.dart';
 
 // Primary tags enum class
 enum Category { 
@@ -6,7 +8,21 @@ enum Category {
   University,
   Entertainment,
   Parking,
-  Emergency
+  Emergency,
+  Other
+}
+
+Category CategoryFromString(String string) {
+  switch(string)
+  {
+    case "Dining":        return Category.Dining;
+    case "University":    return Category.University;
+    case "Entertainment": return Category.Entertainment;
+    case "Parking":       return Category.Parking;
+    case "Emergency":     return Category.Emergency;
+    case "Other":         return Category.Other;
+    default:              return null;
+  }
 }
 
 extension CategoryExtension on Category {
@@ -29,6 +45,9 @@ extension CategoryExtension on Category {
         break;
       case Category.Emergency:
         outColor = Colors.white;
+        break;
+      case Category.Other:
+        outColor = Colors.blueGrey;
         break;
     }
     return outColor;
@@ -54,6 +73,9 @@ extension CategoryExtension on Category {
       case Category.Emergency:
         outIcon = Icons.local_hospital;
         break;
+      case Category.Other:
+        outIcon = Icons.help;
+        break;
     }
     return outIcon;
   }
@@ -67,6 +89,8 @@ class Location {
   double latitude;
   double longitude;
 
+  int id;
+
   String name;
   String description;
 
@@ -76,7 +100,10 @@ class Location {
 
   Category category;
 
+  List<CommentModel> comments;
   List<String> tags;
+  int thumbs;
+  //TODO comments
   
   Location({this.latitude, 
             this.longitude, 
@@ -84,6 +111,10 @@ class Location {
             this.description, 
             this.accountNickname,
             this.category,
-            this.tags});
+            this.tags,
+            this.comments,
+            this.id,
+            this.thumbs,
+            this.isVerified});
 
 }
