@@ -172,9 +172,17 @@ class API
   static update(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
-      Results result = await DataBase().query(
-        "SELECT * FROM locations WHERE id = ?",
-        [loc.id]
+      await DataBase().query(
+        "UPDATE `locations` SET `name`=?,`description`=?,`latitude`=?,`longitude`=?,`category`=? WHERE `id`=?", [
+          // SET
+          loc.name,
+          loc.description,
+          loc.latitude,
+          loc.longitude,
+          loc.category.toString().split('.').last,
+          // WHERE
+          loc.id
+        ]
       );
     }
     on SocketException catch(exc) {

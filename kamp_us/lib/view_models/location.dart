@@ -79,7 +79,6 @@ extension CategoryExtension on Category {
     }
     return outIcon;
   }
-
 }
 
 class Location {
