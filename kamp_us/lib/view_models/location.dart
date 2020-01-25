@@ -53,10 +53,10 @@ extension CategoryExtension on Category {
     return outColor;
   }
 
-  IconData icon(Category category)
+  IconData icon()
   {
     IconData outIcon;
-    switch(category)
+    switch(this)
     {
       case Category.Dining:
         outIcon = Icons.restaurant_menu;

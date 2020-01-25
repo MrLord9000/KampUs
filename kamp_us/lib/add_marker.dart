@@ -13,7 +13,6 @@ class AddMarkerPage extends StatefulWidget {
 
 class _AddMarkerPageState extends State<AddMarkerPage> {
 
-  
   final _placeNameController = TextEditingController();
   final _placeDescriptionController = TextEditingController();
   final _tagController = TextEditingController();
