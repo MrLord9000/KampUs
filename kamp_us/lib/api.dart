@@ -168,7 +168,6 @@ class API
     return null;
   }
 
-//TODO
   static update(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
@@ -194,6 +193,31 @@ class API
       print(exc.runtimeType);
     }
   }
+
+  static insert(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query(
+        "INSERT INTO `locations`(`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?)", [
+          2,//TODO user id
+          loc.name,
+          loc.description,
+          loc.latitude,
+          loc.longitude,
+          loc.category.toString().split('.').last,
+        ]
+      );
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
   static delete(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {

@@ -99,12 +99,12 @@ class _MyLoggingPage extends State<MyLoggingPage> {
     Location l = new Location( id: 2 );
     API.load(l, ()=>print("ok"), (str)=>print(str)).then( 
       (l) => {
-        l.name = "Ładne miejsce",
-        l.description += "\nCoś się tu zmieniło",
-        l.latitude = 2.1,
-        l.longitude = 3.7,
-        l.category = Category.University,
-        API.update(l, ()=>print("ok"), (str)=>print(str))
+        l.name = "Nowe miejsce",
+        l.description += "Woooo",
+        l.latitude++,
+        l.longitude--,
+        l.category = Category.Entertainment,
+        API.insert(l, ()=>print("ok"), (str)=>print(str))
       }
     );
     return Scaffold (
