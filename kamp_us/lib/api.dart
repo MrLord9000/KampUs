@@ -115,54 +115,45 @@ class API
       }
       else
       {
-        int i = 0;
-        print(i++);
-        Results thumbs = await DataBase().query(
-          "SELECT * FROM thumbs WHERE loc_id = ?",
-          [loc.id]
-        );
-        int thumbsNumber = thumbs.length;
-        print(i++);
-
-        Results comments = await DataBase().query(
-          "SELECT * FROM comments WHERE loc_id = ?",
-          [loc.id]
-        );
-        
+        AccountModel acc;
+        int thumbsNumber;        
         List<CommentModel> commentsList= new List<CommentModel>();
-        for (var row in comments) {
-          commentsList.add( 
-            new CommentModel( 
-              id: row[0],
-              userId: row[1],
-              locId: row[2],
-              text: row[3].toString()
-            )
-          );
-        }
-        print(i++);
-
-        Results tags = await DataBase().query(
-          "SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ",
-          [loc.id]
-        );
-
         List<String> tagsList= new List<String>();
-        for (var row in tags) {
-          tagsList.add(row[0]);
-        }
-        print(i++);
 
-        Results creator = await DataBase().query(
-          "SELECT nickname, email FROM accounts WHERE id = ?",
-          [location.first[1]]
-        );
-        print(i++);
+        // TODO Replace queries by methods, where then will be done
+        Future loadAcc = loadAccount(new AccountModel(id: location.first[1]), ifSuccess, ifFailure)
+          .then((result) => {acc = result});
+        Future loadThumbs = DataBase().query( "SELECT * FROM thumbs WHERE loc_id = ?", [loc.id])
+          .then((result) => {thumbsNumber = result.length});        
+        Future loadcomments = DataBase().query( "SELECT * FROM comments WHERE loc_id = ?", [loc.id])
+          .then((result) => {
+            for (var row in result) {
+              commentsList.add( 
+                new CommentModel( 
+                  id: row[0],
+                  userId: row[1],
+                  locId: row[2],
+                  text: row[3].toString()
+                )
+              )
+            }
+          });
+        Future loadTags = DataBase().query("SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ", [loc.id])
+          .then((result) => {
+            for (var row in result) {
+              tagsList.add(row[0])
+            }
+          });
         
+        await loadAcc;
+        await loadThumbs;
+        await loadcomments;
+        await loadTags;
+
         ifSuccess();
         loc = new Location(
           id: location.first[0],
-          accountNickname: creator.first[0] ?? creator.first[1],
+          creator: acc,
           name: location.first[2].toString(),
           description: location.first[3].toString(),
           latitude: location.first[4],
@@ -220,7 +211,7 @@ class API
     {
       await DataBase().query(
         "INSERT INTO `locations`(`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?)", [
-          2,//TODO user id
+          loc.creator.id,
           loc.name,
           loc.description,
           loc.latitude,
@@ -228,6 +219,7 @@ class API
           loc.category.toString().split('.').last,
         ]
       );
+      ifSuccess();
     }
     on SocketException catch(exc) {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      

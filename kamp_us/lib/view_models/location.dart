@@ -93,7 +93,7 @@ class Location {
   String name;
   String description;
 
-  String accountNickname;
+  AccountModel creator;
 
   bool isVerified;
 
@@ -108,7 +108,7 @@ class Location {
             this.longitude, 
             this.name, 
             this.description, 
-            this.accountNickname,
+            this.creator,
             this.category,
             this.tags,
             this.comments,

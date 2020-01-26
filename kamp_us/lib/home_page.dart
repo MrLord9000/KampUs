@@ -37,6 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   _getScreenMarkers() {
     _markers.clear();
 
+    // TODO DISABLED DUE TO LOCATION VIEW MODEL CHANGE
+    /*
     // TODO: Remove mockup and add api functionality
     List<Location> locations = LocationMocks.getLocations(0, 1, 0, 1);
 
@@ -53,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _markers[location.name] = marker;
       });
     }
-
+    */
   }
 
   _onCreateMarker(LatLng latLng) {
