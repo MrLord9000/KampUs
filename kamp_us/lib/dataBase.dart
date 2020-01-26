@@ -4,11 +4,11 @@ class DataBase {
   static DataBase _instance = new DataBase._init();
 
   static final settings =  ConnectionSettings(
-        host: 'db4free.net',
-        port: 3306,
-        db: 'mobilki2019test',
-        user: 'temmie', 
-        password: "temmievillage"
+    host: 'db4free.net',
+    port: 3306,
+    db: 'mobilki2019test',
+    user: 'temmie', 
+    password: "temmievillage"
   );
 
   Future<MySqlConnection> _connection;

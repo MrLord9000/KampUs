@@ -15,12 +15,13 @@ class API
     return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
   }
 
-  static logIn( String email, String password, Function ifSuccess, Function ifFailure ) async {
+  // By id or email
+  static Future<AccountModel> loadAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
     try
     {
       Results result = await DataBase().query(
-        "SELECT password FROM accounts WHERE email = ?",
-        [email]
+        "SELECT * FROM accounts WHERE id = ? OR email = ?",
+        [acc.id,acc.email]
       );
             
       if ( result.length < 1 ) {
@@ -32,16 +33,12 @@ class API
         ifFailure("BŁĄD BAZY DANYCH: zduplikowany emai! - proszę skontaktować się z administratorem");
       }
       else {
-        // Eamil found in database
-        if ( result.first[0].toString() == password ) {
-          // Good password
-          print("Login ok");
-          ifSuccess();
-        }
-        else {
-          // Wrong password
-          ifFailure("Nieprawidłowe hasło");
-        }
+        return new AccountModel(
+          id: result.first[0],
+          email: result.first[1].toString(),
+          passwd: result.first[2].toString(),
+          nickname: result.first[3]?.toString() ?? result.first[1].toString(),
+        );
       }
     }    
     on SocketException catch(exc) {
@@ -52,14 +49,30 @@ class API
       ifFailure(_unknownErrorLog(exc.toString()));
       print(exc.runtimeType);
     }
+    return null;
   }
 
-  static createAccount( String email, String password, Function ifSuccess, Function ifFailure ) async {
+  static logIn( AccountModel acc, Function ifSuccess, Function ifFailure ) async {        
+    var fromDB = await loadAccount(acc, ifSuccess, ifFailure);
+    // Eamil found in database
+    //TODO hashing password!!!
+    if ( fromDB.passwd == acc.passwd ) {
+      // Good password
+      print("Login ok");
+      ifSuccess();
+    }
+    else {
+      // Wrong password
+      ifFailure("Nieprawidłowe hasło");
+    }
+  }
+
+  static createAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
     try
     {
       await DataBase().query(
         "INSERT INTO `accounts` (`email`,`password`) VALUES (?,?)",
-        [email,password]
+        [acc.email,acc.passwd]
       );
       ifSuccess('Dziękujemy za rejestrację, link do aktywacji został wysłany na podany adres email');
     }
@@ -86,7 +99,8 @@ class API
 
   }
 
-  static Future<Location> load(Location loc, Function ifSuccess, Function ifFailure) async {        
+  // by id
+  static Future<Location> loadLocation(Location loc, Function ifSuccess, Function ifFailure) async {        
     loc.isValid = false;
     try
     {
@@ -117,7 +131,14 @@ class API
         
         List<CommentModel> commentsList= new List<CommentModel>();
         for (var row in comments) {
-          commentsList.add( new CommentModel( row[0], row[1], row[2], row[3].toString() ) );
+          commentsList.add( 
+            new CommentModel( 
+              id: row[0],
+              userId: row[1],
+              locId: row[2],
+              text: row[3].toString()
+            )
+          );
         }
         print(i++);
 
@@ -168,7 +189,7 @@ class API
     return null;
   }
 
-  static update(Location loc, Function ifSuccess, Function ifFailure) async {
+  static updateLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
       await DataBase().query(
@@ -194,7 +215,7 @@ class API
     }
   }
 
-  static insert(Location loc, Function ifSuccess, Function ifFailure) async {
+  static createLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
       await DataBase().query(
@@ -218,7 +239,7 @@ class API
     }
   }
 
-  static delete(Location loc, Function ifSuccess, Function ifFailure) async {
+  static deleteLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
       Future q1 = DataBase().query(

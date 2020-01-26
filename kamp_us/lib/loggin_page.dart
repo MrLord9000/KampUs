@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kamp_us/home_page.dart';
+import 'package:kamp_us/models.dart';
 import 'package:kamp_us/regiser_page.dart';
 import 'package:kamp_us/api.dart';
 import 'package:kamp_us/api.dart';
@@ -98,14 +99,14 @@ class _MyLoggingPage extends State<MyLoggingPage> {
   Widget build (BuildContext context) {
     Location l = new Location( id: 2 );
     // TODO THIS IS TEST
-    API.load(l, ()=>print("ok"), (str)=>print(str)).then( 
+    API.loadLocation(l, ()=>print("ok"), (str)=>print(str)).then( 
       (l) => {
         l.name = "Nowe miejsce",
         l.description += "Woooo",
         l.latitude++,
         l.longitude--,
         l.category = Category.Entertainment,
-        API.save(l, ()=>print("ok"), (str)=>print(str))
+        API.createLocation(l, ()=>print("ok"), (str)=>print(str))
       }
     );
     return Scaffold (
@@ -163,10 +164,12 @@ class _MyLoggingPage extends State<MyLoggingPage> {
                 elevation: 10.0,
                 child: GestureDetector(
                   onTap: () {
-
+                    var account = AccountModel(
+                      email: _emailController.text,
+                      passwd: _passwordController.text,
+                    );
                     API.logIn(
-                      _emailController.text,
-                      _passwordController.text,
+                      account,
                       () => Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS'))),
                       wrongLoginData
                     );
