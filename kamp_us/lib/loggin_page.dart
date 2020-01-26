@@ -97,6 +97,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
 
   Widget build (BuildContext context) {
     Location l = new Location( id: 2 );
+    // TODO THIS IS TEST
     API.load(l, ()=>print("ok"), (str)=>print(str)).then( 
       (l) => {
         l.name = "Nowe miejsce",
@@ -104,7 +105,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
         l.latitude++,
         l.longitude--,
         l.category = Category.Entertainment,
-        API.insert(l, ()=>print("ok"), (str)=>print(str))
+        API.save(l, ()=>print("ok"), (str)=>print(str))
       }
     );
     return Scaffold (
