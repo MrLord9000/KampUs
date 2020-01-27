@@ -70,20 +70,19 @@ class _MyHomePageState extends State<MyHomePage> {
       final marker = Marker(
         markerId: MarkerId(location.id.toString()),
         position: LatLng(location.latitude, location.longitude),
-        // icon: BitmapDescriptor.fromAssetImage(
-        //   ImageConfiguration(),
-          
-        //   ),
-        // TODO: Add onTap action to display location information
-        onTap: () {
-          Navigator.push(
-            context, 
-            MaterialPageRoute(
-                builder: (context) => LocationInfoPage(location: location)
-              )
-            );
-        },
-        infoWindow: InfoWindow(title: location.name),
+        icon: CategoryIcon().iconFromCategory(location.category),
+        infoWindow: InfoWindow(
+            title: location.name,
+            snippet: "Dotknij aby zobaczyć szczegóły",
+            onTap: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => LocationInfoPage(location: location)
+                  )
+              );
+            },
+          ),
       );
       _markers[location.id.toString()] = marker;
     }
@@ -101,8 +100,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _newMarker = Marker(
       markerId: newMarkerId,
       position: latLng,
+      icon: CategoryIcon().newIcon,
       infoWindow: InfoWindow(
         title: "Utwórz nowy znacznik",
+        snippet: "Dotknij aby kontynuować",
         onTap: () {
           Navigator.push(context, MaterialPageRoute(
             builder: (context) => AddMarkerPage(latLng: latLng),
@@ -110,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
       ),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
     );
     setState(() {
       _markers["new_marker"] = _newMarker;
@@ -275,3 +275,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+

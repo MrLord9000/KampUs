@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kamp_us/models.dart';
 
 // Primary tags enum class
@@ -8,7 +9,72 @@ enum Category {
   Entertainment,
   Parking,
   Emergency,
-  Other
+  Other,
+}
+
+class CategoryIcon {
+  static CategoryIcon _instance = CategoryIcon._init();
+
+  BitmapDescriptor _entertainmentIcon;
+  BitmapDescriptor _universityIcon;
+  BitmapDescriptor _diningIcon;
+  BitmapDescriptor _parkingIcon;
+  BitmapDescriptor _emergencyIcon;
+  BitmapDescriptor _otherIcon;
+  BitmapDescriptor _newIcon;
+
+  BitmapDescriptor get entertainmentIcon => _entertainmentIcon;
+  BitmapDescriptor get universityIcon => _universityIcon;
+  BitmapDescriptor get diningIcon => _diningIcon;
+  BitmapDescriptor get parkingIcon => _parkingIcon;
+  BitmapDescriptor get emergencyIcon => _emergencyIcon;
+  BitmapDescriptor get otherIcon => _otherIcon;
+  BitmapDescriptor get newIcon => _newIcon;
+
+  factory CategoryIcon() {
+    return _instance;
+  }
+
+  CategoryIcon._init() {
+    _populate();
+  }
+
+  BitmapDescriptor iconFromCategory(Category category)
+  {
+    BitmapDescriptor output = BitmapDescriptor.defaultMarker;
+    switch(category)
+    {
+      case Category.Dining:
+        output = _diningIcon;
+        break;
+      case Category.University:
+        output = _universityIcon;
+        break;
+      case Category.Entertainment:
+        output = _entertainmentIcon;
+        break;
+      case Category.Parking:
+        output = _parkingIcon;
+        break;
+      case Category.Emergency:
+        output = _emergencyIcon;
+        break;
+      case Category.Other:
+        output = _otherIcon;
+        break;
+    }
+    return output;
+  }
+
+  _populate() async {
+    _entertainmentIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Entertainment_icon.png");
+    _universityIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/University_icon.png");
+    _diningIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Dining_icon.png");
+    _parkingIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Parking_icon.png");
+    _emergencyIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Emergency_icon.png");
+    _otherIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Unknown_icon.png");
+    _newIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/New_icon.png");
+  }
 }
 
 Category CategoryFromString(String string) {
@@ -48,6 +114,32 @@ Color colorFromCategory(Category category) {
       break;
   }
   return outColor;
+}
+
+String imagePathFromCategory(Category category)
+{
+  String path;
+  switch (category)
+  {
+    case Category.Dining:
+      path = "images/Dining_icon.png";
+      break;
+    case Category.University:
+      path = "images/University_icon.png";
+      break;
+    case Category.Entertainment:
+      path = "images/Entertainment_icon.png";
+      break;
+    case Category.Parking:
+      path = "images/Parking_icon.png";
+      break;
+    case Category.Emergency:
+      path = "images/Emergency_icon.png";
+      break;
+    case Category.Other:
+      path = "images/Other_icon.png";
+      break;
+  }
 }
 
 IconData iconFromCategory(Category category)

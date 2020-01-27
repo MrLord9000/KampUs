@@ -98,7 +98,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
   Widget build (BuildContext context) {
     Location l = new Location( id: 2 );
     // TODO THIS IS TEST
-    API.createTag("TEST_TAG", ()=>print("tags test"), (str)=>print(str));
+    //API.createTag("TEST_TAG", ()=>print("tags test"), (str)=>print(str));
     return Scaffold (
       appBar: AppBar(
         title: Text(widget.title),
