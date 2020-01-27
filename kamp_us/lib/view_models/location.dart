@@ -77,7 +77,7 @@ class CategoryIcon {
   }
 }
 
-Category CategoryFromString(String string) {
+Category categoryFromString(String string) {
   switch(string)
   {
     case "Dining":        return Category.Dining;
@@ -140,6 +140,7 @@ String imagePathFromCategory(Category category)
       path = "images/Other_icon.png";
       break;
   }
+  return path;
 }
 
 IconData iconFromCategory(Category category)

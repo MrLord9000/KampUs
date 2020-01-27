@@ -187,7 +187,7 @@ class API
           latitude: location.first[4],
           longitude: location.first[5],
           isVerified: location.first[6] == 0,
-          category: CategoryFromString(location.first[7]),
+          category: categoryFromString(location.first[7]),
           thumbs: thumbsNumber,
           tags: tagsList,
           comments: commentsList,

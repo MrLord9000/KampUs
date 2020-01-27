@@ -3,17 +3,15 @@ import 'package:kamp_us/home_page.dart';
 import 'package:kamp_us/models.dart';
 import 'package:kamp_us/regiser_page.dart';
 import 'package:kamp_us/api.dart';
-import 'package:kamp_us/view_models/location.dart';
 
-
-class MyLoggingPage extends StatefulWidget {
-  MyLoggingPage({Key key, this.title}) : super(key: key);
+class MyLoginPage extends StatefulWidget {
+  MyLoginPage({Key key, this.title}) : super(key: key);
 
   final String title;
-  _MyLoggingPage createState() => _MyLoggingPage();
+  _MyLoginPage createState() => _MyLoginPage();
 }
 
-class _MyLoggingPage extends State<MyLoggingPage> {
+class _MyLoginPage extends State<MyLoginPage> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -96,9 +94,7 @@ class _MyLoggingPage extends State<MyLoggingPage> {
   }
 
   Widget build (BuildContext context) {
-    Location l = new Location( id: 2 );
-    // TODO THIS IS TEST
-    //API.createTag("TEST_TAG", ()=>print("tags test"), (str)=>print(str));
+
     return Scaffold (
       appBar: AppBar(
         title: Text(widget.title),

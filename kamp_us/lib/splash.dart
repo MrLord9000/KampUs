@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:kamp_us/loggin_page.dart';
-
-import 'home_page.dart';
+import 'package:kamp_us/login_page.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () => Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoggingPage(title: 'KampUS'))));
+    Timer(Duration(seconds: 3), () => Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoginPage(title: 'KampUS'))));
   }
 
   @override
