@@ -172,7 +172,7 @@ class API
     try
     {
       Results result = await DataBase().query(
-        "SELECT id FROM locations WHERE (longitude BETWEN ? AND ?) AND (latitude BETWEN ? AND ?)",
+        "SELECT id FROM locations WHERE (longitude BETWEEN ? AND ?) AND (latitude BETWEEN ? AND ?)",
         [lngMIn,lngMax,latMIn,latMax]
       );
       var locs = new List<Location>();

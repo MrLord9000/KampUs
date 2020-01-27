@@ -22,7 +22,11 @@ dependencies:
 
   mysql1: ^0.17.1
   password_hash: ^2.0.0
-  google_maps_flutter: ^0.5.11
+  google_maps_flutter:
+    git:
+      url: git://github.com/giancarlopro/plugins.git
+      path: packages/google_maps_flutter
+      ref: development
   geolocator: ^5.1.4+2
 
   # The following adds the Cupertino Icons font to your application.
