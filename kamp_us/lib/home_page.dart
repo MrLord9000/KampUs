@@ -23,6 +23,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final Map<String, Marker> _markers = {};
+  Marker _newMarker;
   GoogleMapController mapController;
   Position _center = Position(latitude: 51.753710, longitude: 19.451742);
   double _zoom = 14.0;
@@ -37,6 +38,11 @@ class _MyHomePageState extends State<MyHomePage> {
   _getScreenMarkers() {
     _markers.clear();
 
+    if (_newMarker != null)
+    {
+      _markers["new_marker"] = _newMarker;
+    }
+
     // TODO: Remove mockup and add api functionality
     List<Location> locations = LocationMocks.getLocations(0, 1, 0, 1);
 
@@ -46,6 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // TODO: Not a good practice - change to unique value later
         markerId: MarkerId(location.name),
         position: LatLng(location.latitude, location.longitude),
+        // icon: BitmapDescriptor.fromAssetImage(
+        //   ImageConfiguration(),
+          
+        //   ),
         // TODO: Add onTap action to display location information
         infoWindow: InfoWindow(title: location.name),
       );
@@ -57,21 +67,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _onCreateMarker(LatLng latLng) {
-    
+    MarkerId newMarkerId =  MarkerId("new_marker");
     setState(() {
-      final newMarker = Marker(
-        markerId: MarkerId("new_marker"),
+      _newMarker = Marker(
+        markerId:newMarkerId,
         position: latLng,
+        infoWindow: InfoWindow(
+          title: "Utwórz nowy znacznik",
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => AddMarkerPage(latLng: latLng),
+              )
+            );
+          },
+        ),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
       );
-      _markers["New Marker"] = newMarker;
+      _markers["new_marker"] = _newMarker;
     });
 
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => AddMarkerPage(),
-      )
-    );
-
+    //mapController.showMarkerInfoWindow(newMarkerId);
   }
 
   @override
@@ -98,6 +113,11 @@ class _MyHomePageState extends State<MyHomePage> {
           GoogleMap(
             onMapCreated: _onMapCreated,
             onCameraIdle: _getScreenMarkers,
+            onTap: (latLng) {
+              setState(() {
+                _markers.remove("new_marker");
+              });
+            },
             
             initialCameraPosition: CameraPosition(
               target: LatLng(_center.latitude, _center.longitude),
