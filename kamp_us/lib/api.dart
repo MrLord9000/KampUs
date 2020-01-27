@@ -11,6 +11,9 @@ class API
   static const ER_NO_SUCH_TABLE = 1146;
   static const ER_BAD_FIELD_ERROR = 1054;
 
+  static AccountModel _currentUser;
+  static get currentUser => _currentUser;
+
   static String _unknownErrorLog( String errorLog ) {
     return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
   }
@@ -59,6 +62,7 @@ class API
     if ( fromDB.passwd == acc.passwd ) {
       // Good password
       print("Login ok");
+      _currentUser = fromDB;
       ifSuccess();
     }
     else {
