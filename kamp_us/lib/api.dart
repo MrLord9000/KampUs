@@ -365,7 +365,6 @@ class API
     }
   }
 
-  
   static createThumb(ThumbModel thumb, Function ifSuccess, Function ifFailure ) async {
     try
     {
@@ -396,5 +395,37 @@ class API
       print(exc.runtimeType);
     }
   }
-}
 
+  static deleteComment(CommentModel com, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query( "DELETE FROM comments WHERE id = ?", [com.id] );
+      ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static deleteThumb(ThumbModel thumb, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query( "DELETE FROM thumbs WHERE id = ?", [thumb.id] );
+      ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+}
