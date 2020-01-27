@@ -29,7 +29,8 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
         longitude: widget.latLng.longitude,
         category: _categorySelected,
         name: _placeNameController.text,
-        description: _placeDescriptionController.text
+        description: _placeDescriptionController.text,
+        tags: _tagController.text.split(" ")
       ), 
       () {print("Added location successfully");}, 
       (String msg) {print(msg);});

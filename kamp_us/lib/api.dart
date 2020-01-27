@@ -332,6 +332,7 @@ class API
     return null;
   }
   
+  //TODO incomplete
   static updateLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
@@ -485,6 +486,51 @@ class API
     {
       await DataBase().query( "DELETE FROM thumbs WHERE id = ?", [thumb.id] );
       ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static createTag(String tag, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query( "INSERT INTO tags (tag) VALUES (?)", [tag] );
+      ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    on MySqlException catch(exc){
+      if(exc.errorNumber == ER_DUP_ENTRY){
+        // If tag is already in database, it's ok
+        ifSuccess();
+      }
+      else{
+        ifFailure(_unknownErrorLog(exc.toString()));
+        print(exc.runtimeType);
+      }
+
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static Future<TagModel> getTag(String tag, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      Results result =  await DataBase().query( "GET id FROM tags WHERE tag=?", [tag] );
+      var model = TagModel( id: result.first[0], tag: tag );
+      ifSuccess();
+      return model;
     }
     on SocketException catch(exc) {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
