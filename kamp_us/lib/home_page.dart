@@ -245,30 +245,24 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             panel: Container(
-              child: Column(
+              padding: EdgeInsets.only(top: 125.0),
+              child: Wrap(
                 children: <Widget>[
-                  Text('Text'),
-                  for(int i = 0; i < tags.length; i++)
-                    Row(
-                      children: <Widget>[
-                        Text(tags.elementAt(i).tag),
-                        Container(
-                            padding: EdgeInsets.all(10.0),
-                            height: 100.0,
-                            child:  Material(
-                              borderRadius: BorderRadius.all(Radius.circular(2)),
-                              color: Colors.red,
-                              child: GestureDetector(
-                                onTap: () {
-
-                                  //Wybierz dany tag
-                                },
-                              ),
-                            )
-                        ),
-                      ],
-                    )
-
+                    for(int i = 0; i < tags.length; i++)
+                      Container(
+                        padding: EdgeInsets.all(5.0),
+                        alignment: Alignment.center,
+                        height: 30.0,
+                        width: MediaQuery.of(context).size.width/3,
+                        color: Colors.cyanAccent,
+                        child: GestureDetector (
+                          onTap: () {
+                            //Tutaj wybierz tag czy co
+                            print(tags.elementAt(i).tag);
+                          },
+                          child: Text(tags.elementAt(i).tag, textAlign: TextAlign.center),
+                        )
+                      )
                 ],
               )
             ),
