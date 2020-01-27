@@ -168,6 +168,30 @@ class API
     return null;
   }
 
+  static Future<List<Location>> loadLocationsInRange(double lngMIn, double lngMax, double latMIn, double latMax, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      Results result = await DataBase().query(
+        "SELECT id FROM locations WHERE (longitude BETWEN ? AND ?) AND (latitude BETWEN ? AND ?)",
+        [lngMIn,lngMax,latMIn,latMax]
+      );
+      var locs = new List<Location>();
+      for (var row in result) {
+        locs.add( await loadLocation( new Location( id: row[0] ), ifSuccess, ifFailure) );
+      }
+      return locs;
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+
   static Future<List<ThumbModel>> loadLocationsThumbs(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
@@ -300,9 +324,11 @@ class API
       Future q1 = DataBase().query( "DELETE FROM locations WHERE id = ?", [loc.id] ); 
       Future q2 = DataBase().query( "DELETE FROM loc_tag WHERE loc_id = ?", [loc.id] );
       Future q3 = DataBase().query( "DELETE FROM comments WHERE loc_id = ?", [loc.id] );
+      Future q4 = DataBase().query( "DELETE FROM thumbs WHERE loc_id = ?", [loc.id] );
       await q1;
       await q2;
       await q3;
+      await q4;
       ifSuccess();
     }
     on SocketException catch(exc) {
