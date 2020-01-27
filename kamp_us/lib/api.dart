@@ -361,7 +361,7 @@ class API
     {
       await DataBase().query(
         "INSERT INTO `locations`(`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?)", [
-          loc.creator.id,
+          API.currentUser,
           loc.name,
           loc.description,
           loc.latitude,

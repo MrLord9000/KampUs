@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       _markers["new_marker"] = _newMarker;
     });
-
+    
     //mapController.showMarkerInfoWindow(newMarkerId);
   }
 
