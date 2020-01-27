@@ -27,12 +27,13 @@ class API
       );
     }
     else {
+      print("else");
       return null;
     }
   }
 
   static saveUser(AccountModel acc) async {
-    var op1 = storage.write(key: "remember", value: "false");
+    var op1 = storage.write(key: "remember", value: "true");
     var op2 = storage.write(key: "id", value: acc.id.toString() );
     var op3 = storage.write(key: "email", value: acc.email );
     var op4 = storage.write(key: "passwd", value: acc.passwd );
@@ -361,7 +362,7 @@ class API
     {
       await DataBase().query(
         "INSERT INTO `locations`(`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?)", [
-          await API.currentUser.id,
+          (await API.currentUser).id,
           loc.name,
           loc.description,
           loc.latitude,
