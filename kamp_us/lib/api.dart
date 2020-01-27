@@ -362,9 +362,19 @@ class API
   static createLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
-      await DataBase().query(
-        "INSERT INTO `locations`(`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?)", [
-          (await API.currentUser).id,
+      var futureTagModels = new List<Future<TagModel>>();
+
+      for (var tag in loc.tags) {
+        await createTag(tag, (){}, ifFailure);
+        futureTagModels.add( loadTag(tag, (){}, ifFailure) );
+        print("xD");
+      }      
+      int userID = (await API.currentUser).id;
+      loc.id = (await DataBase().query("SELECT MAX(id) FROM locations",[])).first[0]+1;
+      var location =  DataBase().query(
+        "INSERT INTO `locations`(`id`,`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?,?)", [
+          loc.id,
+          userID,
           loc.name,
           loc.description,
           loc.latitude,
@@ -372,6 +382,11 @@ class API
           loc.category.toString().split('.').last,
         ]
       );
+
+      for (var future in futureTagModels) {
+        DataBase().query("INSERT INTO loc_tag (loc_id,tag_id) VALUES (?,?)",[loc.id,(await future).id]);
+      }
+
       ifSuccess();
     }
     on SocketException catch(exc) {
@@ -524,10 +539,10 @@ class API
     }
   }
 
-  static Future<TagModel> getTag(String tag, Function ifSuccess, Function ifFailure) async {
+  static Future<TagModel> loadTag(String tag, Function ifSuccess, Function ifFailure) async {
     try
     {
-      Results result =  await DataBase().query( "GET id FROM tags WHERE tag=?", [tag] );
+      Results result =  await DataBase().query( "SELECT id FROM tags WHERE tag=?", [tag] );
       var model = TagModel( id: result.first[0], tag: tag );
       ifSuccess();
       return model;
@@ -540,6 +555,7 @@ class API
       ifFailure(_unknownErrorLog(exc.toString()));
       print(exc.runtimeType);
     }
+    return null;
   }
 
 }
