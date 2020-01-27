@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kamp_us/api.dart';
-import 'package:kamp_us/mock_models/location_mocks.dart';
 import 'add_marker.dart';
+import 'location_info_page.dart';
 import 'side_menu.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:kamp_us/models.dart';
@@ -26,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final Map<String, Marker> _markers = {};
   Marker _newMarker;
+  final MarkerId newMarkerId = MarkerId("new_marker");
   GoogleMapController mapController;
   Position _center = Position(latitude: 51.753710, longitude: 19.451742);
   double _zoom = 14.0;
@@ -42,16 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _getScreenMarkers();
   }
 
-
-
   _getScreenMarkers() async {
-    _markers.clear();
-
-    if (_newMarker != null)
-    {
-      _markers["new_marker"] = _newMarker;
-    }
-
     LatLngBounds screenBounds = await mapController.getVisibleRegion();
     // Get screen markers depending on screen coordinates
     List<Location> locations = await API.loadLocationsInRange(
@@ -64,12 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
         }, 
       () {
         print("marker download error");
-        // showDialog(context: context,
-        // builder: (BuildContext context) {
-        //   return AlertDialog(content: Text("Nie udało się pobrać zawartości, spróbuj ponownie później"));
-        //   }
-        // );
+        showDialog(context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(content: Text("Nie udało się pobrać zawartości, spróbuj ponownie później"));
+          }
+        );
       });
+
+    _markers.clear();
 
     for (var location in locations)
     {
@@ -81,38 +75,47 @@ class _MyHomePageState extends State<MyHomePage> {
           
         //   ),
         // TODO: Add onTap action to display location information
+        onTap: () {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(
+                builder: (context) => LocationInfoPage(location: location)
+              )
+            );
+        },
         infoWindow: InfoWindow(title: location.name),
       );
+      _markers[location.id.toString()] = marker;
+    }
+    setState(() {});
+
+    if (_newMarker != null)
+    {
       setState(() {
-        _markers[location.id.toString()] = marker;
+        _markers["new_marker"] = _newMarker;
       });
     }
   }
 
-  _onCreateMarker(LatLng latLng) {
-    MarkerId newMarkerId =  MarkerId("new_marker");
+  _onCreateMarker(LatLng latLng) async {
+    _newMarker = Marker(
+      markerId: newMarkerId,
+      position: latLng,
+      infoWindow: InfoWindow(
+        title: "Utwórz nowy znacznik",
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => AddMarkerPage(latLng: latLng),
+            )
+          );
+        },
+      ),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
+    );
     setState(() {
-      _newMarker = Marker(
-        markerId:newMarkerId,
-        position: latLng,
-        infoWindow: InfoWindow(
-          title: "Utwórz nowy znacznik",
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => AddMarkerPage(latLng: latLng),
-              )
-            );
-          },
-        ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure)
-      );
       _markers["new_marker"] = _newMarker;
     });
-    
-    //mapController.showMarkerInfoWindow(newMarkerId);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -139,11 +142,8 @@ class _MyHomePageState extends State<MyHomePage> {
           GoogleMap(
             onMapCreated: _onMapCreated,
             onCameraIdle: _getScreenMarkers,
-            onTap: (latLng) {
-              setState(() {
-                _markers.remove("new_marker");
-              });
-            },
+            onTap: _onCreateMarker,
+            onLongPress: _onCreateMarker,
             
             initialCameraPosition: CameraPosition(
               target: LatLng(_center.latitude, _center.longitude),
@@ -152,7 +152,6 @@ class _MyHomePageState extends State<MyHomePage> {
             
             markers: _markers.values.toSet(),
             compassEnabled: true,
-            onLongPress: _onCreateMarker,
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
 

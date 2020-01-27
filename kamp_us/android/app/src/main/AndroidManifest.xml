@@ -9,7 +9,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="kamp_us"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC5ocy7nzoSiBMD0o5nOX02MIrBa_vD7R8"/>
         <activity
             android:name=".MainActivity"
