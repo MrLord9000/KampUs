@@ -247,7 +247,31 @@ class API
     try
     {
       var list = new List<TagModel>();
-      Results result = await DataBase().query("SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ", [loc.id]);
+      Results result = await DataBase().query("SELECT * FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ", [loc.id]);
+      for (var row in result) {
+        list.add( new TagModel(
+          id: row[0],
+          tag: row[1].toString(),
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+  
+  static Future<List<TagModel>> loadAllTags( Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<TagModel>();
+      Results result = await DataBase().query("SELECT * FROM tags",[]);
       for (var row in result) {
         list.add( new TagModel(
           id: row[0],
@@ -318,6 +342,7 @@ class API
     }
   }
 
+  // by id
   static deleteLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
@@ -396,6 +421,7 @@ class API
     }
   }
 
+  // by id
   static deleteComment(CommentModel com, Function ifSuccess, Function ifFailure) async {
     try
     {
@@ -412,6 +438,7 @@ class API
     }
   }
 
+  // by id
   static deleteThumb(ThumbModel thumb, Function ifSuccess, Function ifFailure) async {
     try
     {
