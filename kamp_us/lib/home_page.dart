@@ -8,6 +8,7 @@ import 'package:kamp_us/mock_models/location_mocks.dart';
 import 'add_marker.dart';
 import 'side_menu.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:kamp_us/models.dart';
 
 import 'view_models/location.dart';
 
@@ -29,12 +30,19 @@ class _MyHomePageState extends State<MyHomePage> {
   Position _center = Position(latitude: 51.753710, longitude: 19.451742);
   double _zoom = 14.0;
 
+  List<TagModel> tags = new List<TagModel>();
+
+  _onStartLoadTags() async {
+    tags = await API.loadAllTags(()=>{print('sukces')}, (x)=>{print(x)});
+  }
+
   _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-
     // Here you should retrieve all the markers from screen you're currently on
     _getScreenMarkers();
   }
+
+
 
   _getScreenMarkers() async {
     _markers.clear();
@@ -104,9 +112,12 @@ class _MyHomePageState extends State<MyHomePage> {
     //mapController.showMarkerInfoWindow(newMarkerId);
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-
+    _onStartLoadTags();
+    print(tags.length);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -148,6 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
 
           SlidingUpPanel(
+
             collapsed: Column(
               children: <Widget>[
                 Row(
@@ -236,13 +248,28 @@ class _MyHomePageState extends State<MyHomePage> {
             panel: Container(
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        //Tutaj tagi
-                      )
-                    ],
-                  )
+                  Text('Text'),
+                  for(int i = 0; i < tags.length; i++)
+                    Row(
+                      children: <Widget>[
+                        Text(tags.elementAt(i).tag),
+                        Container(
+                            padding: EdgeInsets.all(10.0),
+                            height: 100.0,
+                            child:  Material(
+                              borderRadius: BorderRadius.all(Radius.circular(2)),
+                              color: Colors.red,
+                              child: GestureDetector(
+                                onTap: () {
+
+                                  //Wybierz dany tag
+                                },
+                              ),
+                            )
+                        ),
+                      ],
+                    )
+
                 ],
               )
             ),

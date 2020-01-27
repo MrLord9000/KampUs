@@ -3,7 +3,6 @@ import 'package:kamp_us/home_page.dart';
 import 'package:kamp_us/models.dart';
 import 'package:kamp_us/regiser_page.dart';
 import 'package:kamp_us/api.dart';
-import 'package:kamp_us/api.dart';
 import 'package:kamp_us/view_models/location.dart';
 
 

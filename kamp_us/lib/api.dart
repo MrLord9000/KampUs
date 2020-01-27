@@ -316,7 +316,8 @@ class API
           id: row[0],
           tag: row[1].toString(),
         ));
-      } 
+      }
+
       return list;
     }    
     on SocketException catch(exc) {
