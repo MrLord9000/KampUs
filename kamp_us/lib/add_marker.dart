@@ -28,12 +28,11 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
         latitude: widget.latLng.latitude,
         longitude: widget.latLng.longitude,
         category: _categorySelected,
-        creator: AccountModel(id: 666),
         name: _placeNameController.text,
         description: _placeDescriptionController.text
       ), 
       () {print("Added location successfully");}, 
-      () {print("Location creation failed");});
+      (String msg) {print(msg);});
   }
 
   void _onCategoryChanged(Category value) {
