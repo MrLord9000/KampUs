@@ -148,9 +148,104 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
 
           SlidingUpPanel(
-            panel: Center(
-              child: Text('markers')
-            )
+            collapsed: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(10.0),
+                      height: 100.0,
+                      width: 75.0,
+                      child:  Material(
+                        borderRadius: BorderRadius.all(Radius.circular(2)),
+                        color: Colors.blue,
+                        child: GestureDetector(
+                          onTap: () {
+                            print('blue');
+                            //Wybierz marker niebieski
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(10.0),
+                        height: 100.0,
+                        width: 75.0,
+                        child:  Material(
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                          color: Colors.red,
+                          child: GestureDetector(
+                            onTap: () {
+                              print('red');
+                              //Wybierz marker czerwony
+                            },
+                          ),
+                        )
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(10.0),
+                        height: 100.0,
+                        width: 75.0,
+                        child:  Material(
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                          color: Colors.yellow,
+                          child: GestureDetector(
+                            onTap: () {
+                              print('yellow');
+                              //Wybierz marker żółty
+                            },
+                          ),
+                        )
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(10.0),
+                        height: 100.0,
+                        width: 75.0,
+                        child:  Material(
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                          color: Colors.green,
+                          child: GestureDetector(
+                            onTap: () {
+                              print('zielony');
+                              //Wybierz marker zielony
+                            },
+                          ),
+                        )
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(10.0),
+                        height: 100.0,
+                        width: 75.0,
+                        child:  Material(
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                          color: Colors.purple,
+                          child: GestureDetector(
+                            onTap: () {
+                              print('purple');
+                              //Wybierz marker fioletowy
+                            },
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+
+              ],
+            ),
+            panel: Container(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        //Tutaj tagi
+                      )
+                    ],
+                  )
+                ],
+              )
+            ),
           )
         ],
       ),
