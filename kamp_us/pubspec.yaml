@@ -21,6 +21,7 @@ dependencies:
     sdk: flutter
 
   mysql1: ^0.17.1
+  flutter_secure_storage: ^3.3.1+1
   password_hash: ^2.0.0
   google_maps_flutter:
     git:

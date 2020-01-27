@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mysql1/mysql1.dart';
+
 import 'package:kamp_us/dataBase.dart';
 import 'package:kamp_us/models.dart';
 import 'package:kamp_us/view_models/location.dart';
-import 'package:mysql1/mysql1.dart';
 
 class API
 {
@@ -11,8 +13,32 @@ class API
   static const ER_NO_SUCH_TABLE = 1146;
   static const ER_BAD_FIELD_ERROR = 1054;
 
-  static AccountModel _currentUser;
-  static get currentUser => _currentUser;
+  static final storage = new FlutterSecureStorage();
+  
+  static get currentUser async {
+    var storedData = await storage.readAll();
+
+    if( storedData["remember"] == "true" ) {
+        return new AccountModel(
+        id: int.parse( storedData["id"] ),
+        email: storedData["email"],
+        passwd: storedData["passwd"],
+        nickname: storedData["nickName"]
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  static saveUser(AccountModel acc) async {
+    var op1 = storage.write(key: "remember", value: "false");
+    var op2 = storage.write(key: "id", value: acc.id.toString() );
+    var op3 = storage.write(key: "email", value: acc.email );
+    var op4 = storage.write(key: "passwd", value: acc.passwd );
+    var op5 = storage.write(key: "nickName", value: acc.nickname);
+    await op1; await op2; await op3; await op4; await op5;
+  }
 
   static String _unknownErrorLog( String errorLog ) {
     return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
@@ -62,13 +88,22 @@ class API
     if ( fromDB.passwd == acc.passwd ) {
       // Good password
       print("Login ok");
-      _currentUser = fromDB;
+      await saveUser(fromDB);
       ifSuccess();
     }
     else {
       // Wrong password
       ifFailure("Nieprawidłowe hasło");
     }
+  }
+
+  static logOut() async {    
+    var op1 = storage.write(key: "remember", value: "false");
+    var op2 = storage.delete(key: "id");
+    var op3 = storage.delete(key: "email");
+    var op4 = storage.delete(key: "passwd");
+    var op5 = storage.delete(key: "nickName");
+    await op1; await op2; await op3; await op4; await op5;
   }
 
   static createAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
