@@ -340,4 +340,61 @@ class API
       print(exc.runtimeType);
     }
   }
+
+  static createComment(CommentModel com, Function ifSuccess, Function ifFailure ) async {
+    try
+    {
+      await DataBase().query(
+        "INSERT INTO `comments` (`user_id`,`loc_id`,`text`) VALUES (?,?,?)",
+        [com.userId,com.locId,com.text]
+      );
+      ifSuccess();
+    }
+    on MySqlException catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  
+  static createThumb(ThumbModel thumb, Function ifSuccess, Function ifFailure ) async {
+    try
+    {
+      await DataBase().query(
+        "INSERT INTO `thumbs` (`user_id`,`loc_id`) VALUES (?,?)",
+        [thumb.userId,thumb.locId]
+      );
+      ifSuccess();
+    }
+    on MySqlException catch(exc)
+    {
+      switch (exc.errorNumber) {
+        case ER_DUP_ENTRY: 
+          ifFailure("Już poleciłeś tą lokację");
+          break;
+        default:
+          ifFailure(_unknownErrorLog(exc.toString()));
+          print(exc.runtimeType);
+          break;
+      }
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
 }
+
