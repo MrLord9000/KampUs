@@ -117,31 +117,19 @@ class API
       {
         AccountModel acc;
         int thumbsNumber;        
-        List<CommentModel> commentsList= new List<CommentModel>();
+        List<CommentModel> commentsList;
         List<String> tagsList= new List<String>();
 
-        // TODO Replace queries by methods, where then will be done
         Future loadAcc = loadAccount(new AccountModel(id: location.first[1]), ifSuccess, ifFailure)
           .then((result) => {acc = result});
-        Future loadThumbs = DataBase().query( "SELECT * FROM thumbs WHERE loc_id = ?", [loc.id])
+        Future loadThumbs = loadLocationsThumbs(loc, ifSuccess, ifFailure)
           .then((result) => {thumbsNumber = result.length});        
-        Future loadcomments = DataBase().query( "SELECT * FROM comments WHERE loc_id = ?", [loc.id])
+        Future loadcomments = loadLocationsComments(loc, ifSuccess, ifFailure) 
+          .then((result) => { commentsList = result });
+        Future loadTags = loadLocationsTags(loc, ifSuccess, ifFailure)
           .then((result) => {
-            for (var row in result) {
-              commentsList.add( 
-                new CommentModel( 
-                  id: row[0],
-                  userId: row[1],
-                  locId: row[2],
-                  text: row[3].toString()
-                )
-              )
-            }
-          });
-        Future loadTags = DataBase().query("SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ", [loc.id])
-          .then((result) => {
-            for (var row in result) {
-              tagsList.add(row[0])
+            for (var tag in result) {
+              tagsList.add(tag.tag)
             }
           });
         
@@ -180,6 +168,81 @@ class API
     return null;
   }
 
+  static Future<List<ThumbModel>> loadLocationsThumbs(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<ThumbModel>();
+      Results result = await DataBase().query( "SELECT * FROM thumbs WHERE loc_id = ?", [loc.id]);
+      for (var row in result) {
+        list.add( new ThumbModel(
+          id: row[0],
+          userId: row[1],
+          locId: row[2]
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+  
+  static Future<List<CommentModel>> loadLocationsComments(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<CommentModel>();
+      Results result = await DataBase().query( "SELECT * FROM comments WHERE loc_id = ?", [loc.id]);
+      for (var row in result) {
+        list.add( new CommentModel(
+          id: row[0],
+          userId: row[1],
+          locId: row[2],
+          text: row[3].toString()
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+
+  static Future<List<TagModel>> loadLocationsTags(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<TagModel>();
+      Results result = await DataBase().query("SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ", [loc.id]);
+      for (var row in result) {
+        list.add( new TagModel(
+          id: row[0],
+          tag: row[1].toString(),
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+  
   static updateLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
@@ -234,18 +297,9 @@ class API
   static deleteLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
-      Future q1 = DataBase().query(
-        "DELETE FROM locations WHERE id = ?",
-        [loc.id]
-      ); 
-      Future q2 = DataBase().query(
-        "DELETE FROM loc_tag WHERE loc_id = ?",
-        [loc.id]
-      );
-      Future q3 = DataBase().query(
-        "DELETE FROM comments WHERE loc_id = ?",
-        [loc.id]
-      );
+      Future q1 = DataBase().query( "DELETE FROM locations WHERE id = ?", [loc.id] ); 
+      Future q2 = DataBase().query( "DELETE FROM loc_tag WHERE loc_id = ?", [loc.id] );
+      Future q3 = DataBase().query( "DELETE FROM comments WHERE loc_id = ?", [loc.id] );
       await q1;
       await q2;
       await q3;
