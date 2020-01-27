@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kamp_us/models.dart';
 
@@ -79,7 +78,6 @@ extension CategoryExtension on Category {
     }
     return outIcon;
   }
-
 }
 
 class Location {
@@ -94,7 +92,7 @@ class Location {
   String name;
   String description;
 
-  String accountNickname;
+  AccountModel creator;
 
   bool isVerified;
 
@@ -109,7 +107,7 @@ class Location {
             this.longitude, 
             this.name, 
             this.description, 
-            this.accountNickname,
+            this.creator,
             this.category,
             this.tags,
             this.comments,

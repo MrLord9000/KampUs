@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kamp_us/api.dart';
 import 'package:kamp_us/home_page.dart';
+import 'package:kamp_us/models.dart';
 
 class MyRegisterPage extends StatefulWidget {
   MyRegisterPage({Key key, this.title}) : super(key: key);
@@ -76,9 +77,14 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                 child: GestureDetector(
                     onTap: () async {
 
+                    var account;
+                    account = new AccountModel(
+                      email: _emailController.text,
+                      passwd: _passwordController.text,
+                    );
+
                     API.createAccount(
-                      _emailController.text,
-                      _passwordController.text,
+                      account,
                       alertDialogPopUp, 
                       alertDialogPopUp
                     );

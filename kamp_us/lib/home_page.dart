@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:kamp_us/api.dart';
 import 'package:kamp_us/mock_models/location_mocks.dart';
 import 'add_marker.dart';
 import 'side_menu.dart';
@@ -35,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _getScreenMarkers();
   }
 
-  _getScreenMarkers() {
+  _getScreenMarkers() async {
     _markers.clear();
 
     if (_newMarker != null)
@@ -43,14 +44,29 @@ class _MyHomePageState extends State<MyHomePage> {
       _markers["new_marker"] = _newMarker;
     }
 
-    // TODO: Remove mockup and add api functionality
-    List<Location> locations = LocationMocks.getLocations(0, 1, 0, 1);
+    LatLngBounds screenBounds = await mapController.getVisibleRegion();
+    // Get screen markers depending on screen coordinates
+    List<Location> locations = await API.loadLocationsInRange(
+      screenBounds.southwest.longitude, 
+      screenBounds.northeast.longitude, 
+      screenBounds.southwest.latitude, 
+      screenBounds.northeast.latitude, 
+      () {
+        print("successfully downloaded markers");
+        }, 
+      () {
+        print("marker download error");
+        // showDialog(context: context,
+        // builder: (BuildContext context) {
+        //   return AlertDialog(content: Text("Nie udało się pobrać zawartości, spróbuj ponownie później"));
+        //   }
+        // );
+      });
 
     for (var location in locations)
     {
       final marker = Marker(
-        // TODO: Not a good practice - change to unique value later
-        markerId: MarkerId(location.name),
+        markerId: MarkerId(location.id.toString()),
         position: LatLng(location.latitude, location.longitude),
         // icon: BitmapDescriptor.fromAssetImage(
         //   ImageConfiguration(),
@@ -60,10 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
         infoWindow: InfoWindow(title: location.name),
       );
       setState(() {
-        _markers[location.name] = marker;
+        _markers[location.id.toString()] = marker;
       });
     }
-
   }
 
   _onCreateMarker(LatLng latLng) {

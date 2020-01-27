@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:kamp_us/models.dart';
+
+import 'api.dart';
+import 'view_models/location.dart';
 
 
 class AddMarkerPage extends StatefulWidget {
@@ -13,12 +17,29 @@ class AddMarkerPage extends StatefulWidget {
 
 class _AddMarkerPageState extends State<AddMarkerPage> {
 
+  Category _categorySelected;
   final _placeNameController = TextEditingController();
   final _placeDescriptionController = TextEditingController();
   final _tagController = TextEditingController();
 
   void _sendMarkerToDatabase() {
+    API.createLocation(
+      Location(
+        latitude: widget.latLng.latitude,
+        longitude: widget.latLng.longitude,
+        category: _categorySelected,
+        creator: AccountModel(id: 666),
+        name: _placeNameController.text,
+        description: _placeDescriptionController.text
+      ), 
+      () {print("Added location successfully");}, 
+      () {print("Location creation failed");});
+  }
 
+  void _onCategoryChanged(Category value) {
+    setState(() {
+      _categorySelected = value;
+    });
   }
 
   @override
@@ -30,10 +51,6 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
       ),
       body: Column(
         children: <Widget>[
-        
-        GoogleMap(
-          initialCameraPosition: CameraPosition(target: widget.latLng),
-        ),
 
         Container(
           padding: EdgeInsets.all(16.0),
@@ -53,6 +70,42 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
                 decoration: InputDecoration(fillColor: Theme.of(context).accentColor)
               ),
               Padding(padding: EdgeInsets.only(top: 16.0),),
+              Text("Kategoria"),
+              Wrap(
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  Radio(
+                    value: Category.Dining,
+                    groupValue: _categorySelected,
+                    onChanged: _onCategoryChanged,
+                  ),
+                  Text("Jedzenie"),
+                  Radio(
+                    value: Category.Entertainment,
+                    groupValue: _categorySelected,
+                    onChanged: _onCategoryChanged,
+                  ),
+                  Text("Rozrywka"),
+                  Radio(
+                    value: Category.University,
+                    groupValue: _categorySelected,
+                    onChanged: _onCategoryChanged,
+                  ),
+                  Text("Uczelnia"),
+                  Radio(
+                    value: Category.Parking,
+                    groupValue: _categorySelected,
+                    onChanged: _onCategoryChanged,
+                  ),
+                  Text("Parking"),
+                  Radio(
+                    value: Category.Emergency,
+                    groupValue: _categorySelected,
+                    onChanged: _onCategoryChanged,
+                  ),
+                  Text("Alarmowe"),
+                ],
+              ),
               Text("Tagi"),
               TextField(
                 controller: _tagController,
@@ -77,5 +130,4 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
     );
 
   }
-
 }

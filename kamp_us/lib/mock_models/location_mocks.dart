@@ -1,5 +1,5 @@
 import '../view_models/location.dart';
-
+/*
 class LocationMocks {
 
   static List<Location> getLocations(double maxLat, double minLat, double maxLon, double minLon)
@@ -44,4 +44,4 @@ class LocationMocks {
     return locations;
   }
 
-}
+}*/

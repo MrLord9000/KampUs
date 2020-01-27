@@ -15,12 +15,13 @@ class API
     return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
   }
 
-  static logIn( String email, String password, Function ifSuccess, Function ifFailure ) async {
+  // By id or email
+  static Future<AccountModel> loadAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
     try
     {
       Results result = await DataBase().query(
-        "SELECT password FROM accounts WHERE email = ?",
-        [email]
+        "SELECT * FROM accounts WHERE id = ? OR email = ?",
+        [acc.id,acc.email]
       );
             
       if ( result.length < 1 ) {
@@ -32,16 +33,12 @@ class API
         ifFailure("BŁĄD BAZY DANYCH: zduplikowany emai! - proszę skontaktować się z administratorem");
       }
       else {
-        // Eamil found in database
-        if ( result.first[0].toString() == password ) {
-          // Good password
-          print("Login ok");
-          ifSuccess();
-        }
-        else {
-          // Wrong password
-          ifFailure("Nieprawidłowe hasło");
-        }
+        return new AccountModel(
+          id: result.first[0],
+          email: result.first[1].toString(),
+          passwd: result.first[2].toString(),
+          nickname: result.first[3]?.toString() ?? result.first[1].toString(),
+        );
       }
     }    
     on SocketException catch(exc) {
@@ -52,14 +49,30 @@ class API
       ifFailure(_unknownErrorLog(exc.toString()));
       print(exc.runtimeType);
     }
+    return null;
   }
 
-  static createAccount( String email, String password, Function ifSuccess, Function ifFailure ) async {
+  static logIn( AccountModel acc, Function ifSuccess, Function ifFailure ) async {        
+    var fromDB = await loadAccount(acc, ifSuccess, ifFailure);
+    // Eamil found in database
+    //TODO hashing password!!!
+    if ( fromDB.passwd == acc.passwd ) {
+      // Good password
+      print("Login ok");
+      ifSuccess();
+    }
+    else {
+      // Wrong password
+      ifFailure("Nieprawidłowe hasło");
+    }
+  }
+
+  static createAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
     try
     {
       await DataBase().query(
         "INSERT INTO `accounts` (`email`,`password`) VALUES (?,?)",
-        [email,password]
+        [acc.email,acc.passwd]
       );
       ifSuccess('Dziękujemy za rejestrację, link do aktywacji został wysłany na podany adres email');
     }
@@ -86,7 +99,8 @@ class API
 
   }
 
-  static Future<Location> load(Location loc, Function ifSuccess, Function ifFailure) async {        
+  // by id
+  static Future<Location> loadLocation(Location loc, Function ifSuccess, Function ifFailure) async {        
     loc.isValid = false;
     try
     {
@@ -101,47 +115,33 @@ class API
       }
       else
       {
-        int i = 0;
-        print(i++);
-        Results thumbs = await DataBase().query(
-          "SELECT * FROM thumbs WHERE loc_id = ?",
-          [loc.id]
-        );
-        int thumbsNumber = thumbs.length;
-        print(i++);
-
-        Results comments = await DataBase().query(
-          "SELECT * FROM comments WHERE loc_id = ?",
-          [loc.id]
-        );
-        
-        List<CommentModel> commentsList= new List<CommentModel>();
-        for (var row in comments) {
-          commentsList.add( new CommentModel( row[0], row[1], row[2], row[3].toString() ) );
-        }
-        print(i++);
-
-        Results tags = await DataBase().query(
-          "SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ",
-          [loc.id]
-        );
-
+        AccountModel acc;
+        int thumbsNumber;        
+        List<CommentModel> commentsList;
         List<String> tagsList= new List<String>();
-        for (var row in tags) {
-          tagsList.add(row[0]);
-        }
-        print(i++);
 
-        Results creator = await DataBase().query(
-          "SELECT nickname, email FROM accounts WHERE id = ?",
-          [location.first[1]]
-        );
-        print(i++);
+        Future loadAcc = loadAccount(new AccountModel(id: location.first[1]), ifSuccess, ifFailure)
+          .then((result) => {acc = result});
+        Future loadThumbs = loadLocationsThumbs(loc, ifSuccess, ifFailure)
+          .then((result) => {thumbsNumber = result.length});        
+        Future loadcomments = loadLocationsComments(loc, ifSuccess, ifFailure) 
+          .then((result) => { commentsList = result });
+        Future loadTags = loadLocationsTags(loc, ifSuccess, ifFailure)
+          .then((result) => {
+            for (var tag in result) {
+              tagsList.add(tag.tag)
+            }
+          });
         
+        await loadAcc;
+        await loadThumbs;
+        await loadcomments;
+        await loadTags;
+
         ifSuccess();
         loc = new Location(
           id: location.first[0],
-          accountNickname: creator.first[0] ?? creator.first[1],
+          creator: acc,
           name: location.first[2].toString(),
           description: location.first[3].toString(),
           latitude: location.first[4],
@@ -168,13 +168,119 @@ class API
     return null;
   }
 
-//TODO
-  static update(Location loc, Function ifSuccess, Function ifFailure) async {
+  static Future<List<Location>> loadLocationsInRange(double lngMIn, double lngMax, double latMIn, double latMax, Function ifSuccess, Function ifFailure) async {
     try
     {
       Results result = await DataBase().query(
-        "SELECT * FROM locations WHERE id = ?",
-        [loc.id]
+        "SELECT id FROM locations WHERE (longitude BETWEEN ? AND ?) AND (latitude BETWEEN ? AND ?)",
+        [lngMIn,lngMax,latMIn,latMax]
+      );
+      var locs = new List<Location>();
+      for (var row in result) {
+        locs.add( await loadLocation( new Location( id: row[0] ), ifSuccess, ifFailure) );
+      }
+      return locs;
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+
+  static Future<List<ThumbModel>> loadLocationsThumbs(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<ThumbModel>();
+      Results result = await DataBase().query( "SELECT * FROM thumbs WHERE loc_id = ?", [loc.id]);
+      for (var row in result) {
+        list.add( new ThumbModel(
+          id: row[0],
+          userId: row[1],
+          locId: row[2]
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+  
+  static Future<List<CommentModel>> loadLocationsComments(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<CommentModel>();
+      Results result = await DataBase().query( "SELECT * FROM comments WHERE loc_id = ?", [loc.id]);
+      for (var row in result) {
+        list.add( new CommentModel(
+          id: row[0],
+          userId: row[1],
+          locId: row[2],
+          text: row[3].toString()
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+
+  static Future<List<TagModel>> loadLocationsTags(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      var list = new List<TagModel>();
+      Results result = await DataBase().query("SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM loc_tag WHERE loc_id = ?) ", [loc.id]);
+      for (var row in result) {
+        list.add( new TagModel(
+          id: row[0],
+          tag: row[1].toString(),
+        ));
+      } 
+      return list;
+    }    
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    return null;
+  }
+  
+  static updateLocation(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query(
+        "UPDATE `locations` SET `name`=?,`description`=?,`latitude`=?,`longitude`=?,`category`=? WHERE `id`=?", [
+          // SET
+          loc.name,
+          loc.description,
+          loc.latitude,
+          loc.longitude,
+          loc.category.toString().split('.').last,
+          // WHERE
+          loc.id
+        ]
       );
     }
     on SocketException catch(exc) {
@@ -186,24 +292,20 @@ class API
       print(exc.runtimeType);
     }
   }
-  static delete(Location loc, Function ifSuccess, Function ifFailure) async {
+
+  static createLocation(Location loc, Function ifSuccess, Function ifFailure) async {
     try
     {
-      Future q1 = DataBase().query(
-        "DELETE FROM locations WHERE id = ?",
-        [loc.id]
-      ); 
-      Future q2 = DataBase().query(
-        "DELETE FROM loc_tag WHERE loc_id = ?",
-        [loc.id]
+      await DataBase().query(
+        "INSERT INTO `locations`(`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?)", [
+          loc.creator.id,
+          loc.name,
+          loc.description,
+          loc.latitude,
+          loc.longitude,
+          loc.category.toString().split('.').last,
+        ]
       );
-      Future q3 = DataBase().query(
-        "DELETE FROM comments WHERE loc_id = ?",
-        [loc.id]
-      );
-      await q1;
-      await q2;
-      await q3;
       ifSuccess();
     }
     on SocketException catch(exc) {
@@ -215,4 +317,115 @@ class API
       print(exc.runtimeType);
     }
   }
+
+  static deleteLocation(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      Future q1 = DataBase().query( "DELETE FROM locations WHERE id = ?", [loc.id] ); 
+      Future q2 = DataBase().query( "DELETE FROM loc_tag WHERE loc_id = ?", [loc.id] );
+      Future q3 = DataBase().query( "DELETE FROM comments WHERE loc_id = ?", [loc.id] );
+      Future q4 = DataBase().query( "DELETE FROM thumbs WHERE loc_id = ?", [loc.id] );
+      await q1;
+      await q2;
+      await q3;
+      await q4;
+      ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static createComment(CommentModel com, Function ifSuccess, Function ifFailure ) async {
+    try
+    {
+      await DataBase().query(
+        "INSERT INTO `comments` (`user_id`,`loc_id`,`text`) VALUES (?,?,?)",
+        [com.userId,com.locId,com.text]
+      );
+      ifSuccess();
+    }
+    on MySqlException catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static createThumb(ThumbModel thumb, Function ifSuccess, Function ifFailure ) async {
+    try
+    {
+      await DataBase().query(
+        "INSERT INTO `thumbs` (`user_id`,`loc_id`) VALUES (?,?)",
+        [thumb.userId,thumb.locId]
+      );
+      ifSuccess();
+    }
+    on MySqlException catch(exc)
+    {
+      switch (exc.errorNumber) {
+        case ER_DUP_ENTRY: 
+          ifFailure("Już poleciłeś tą lokację");
+          break;
+        default:
+          ifFailure(_unknownErrorLog(exc.toString()));
+          print(exc.runtimeType);
+          break;
+      }
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static deleteComment(CommentModel com, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query( "DELETE FROM comments WHERE id = ?", [com.id] );
+      ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
+  static deleteThumb(ThumbModel thumb, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query( "DELETE FROM thumbs WHERE id = ?", [thumb.id] );
+      ifSuccess();
+    }
+    on SocketException catch(exc) {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      print(exc.runtimeType);
+    }
+  }
+
 }
