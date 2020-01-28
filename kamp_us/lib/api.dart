@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:password_hash/salt.dart';
+import 'package:password_hash/pbkdf2.dart';
 
 import 'package:kamp_us/dataBase.dart';
 import 'package:kamp_us/models.dart';
@@ -14,6 +16,8 @@ class API
   static const ER_BAD_FIELD_ERROR = 1054;
 
   static final storage = new FlutterSecureStorage();
+
+  static PBKDF2 _passwdGenerator = new PBKDF2();
   
   static get currentUser async {
     var storedData = await storage.readAll();
@@ -67,7 +71,8 @@ class API
           id: result.first[0],
           email: result.first[1].toString(),
           passwd: result.first[2].toString(),
-          nickname: result.first[3]?.toString() ?? result.first[1].toString(),
+          salt: result.first[3].toString(),
+          nickname: result.first[4]?.toString() ?? result.first[1].toString(),
         );
       }
     }    
@@ -77,7 +82,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -85,8 +93,12 @@ class API
   static logIn( AccountModel acc, Function ifSuccess, Function ifFailure ) async {        
     var fromDB = await loadAccount(acc, ifSuccess, ifFailure);
     // Eamil found in database
-    //TODO hashing password!!!
-    if ( fromDB.passwd == acc.passwd ) {
+
+    print("Salt from db:     "+fromDB.salt);
+    print("Passwd from db:   "+fromDB.passwd);
+    String encrypted = _passwdGenerator.generateBase64Key(acc.passwd, fromDB.salt, 10, 256);
+
+    if ( fromDB.passwd == encrypted ) {
       // Good password
       print("Login ok");
       await saveUser(fromDB);
@@ -110,10 +122,14 @@ class API
   static createAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
     try
     {
+      String salt = Salt.generateAsBase64String(64);
+      String passwd = _passwdGenerator.generateBase64Key(acc.passwd, salt, 10, 256);
       await DataBase().query(
-        "INSERT INTO `accounts` (`email`,`password`) VALUES (?,?)",
-        [acc.email,acc.passwd]
+        "INSERT INTO `accounts` (`email`,`password`,`salt`) VALUES (?,?,?)",
+        [acc.email,passwd,salt]
       );
+      print("Generated saly:   "+salt);
+      print("Generated passwd: "+passwd);
       ifSuccess('Dziękujemy za rejestrację, link do aktywacji został wysłany na podany adres email');
     }
     on MySqlException catch(exc)
@@ -123,8 +139,10 @@ class API
           ifFailure("Podany adres email jest już używany");
           break;
         default:
-          ifFailure(_unknownErrorLog(exc.toString()));
-          print(exc.runtimeType);
+          ifFailure(_unknownErrorLog(exc.toString()));          
+          print("EXCEPTION");
+          print("type: " + exc.runtimeType.toString());
+          print("messange: " + exc.message);
           break;
       }
     }
@@ -134,7 +152,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
 
   }
@@ -203,7 +224,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -227,7 +251,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -252,7 +279,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -278,7 +308,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -302,7 +335,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -327,7 +363,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }
@@ -355,7 +394,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -395,7 +437,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -419,7 +464,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -435,7 +483,10 @@ class API
     on MySqlException catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     on SocketException catch(exc) {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
@@ -443,7 +494,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -464,7 +518,10 @@ class API
           break;
         default:
           ifFailure(_unknownErrorLog(exc.toString()));
-          print(exc.runtimeType);
+          
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
           break;
       }
     }
@@ -474,7 +531,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -491,7 +551,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -508,7 +571,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -528,14 +594,20 @@ class API
       }
       else{
         ifFailure(_unknownErrorLog(exc.toString()));
-        print(exc.runtimeType);
+        
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
       }
 
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
   }
 
@@ -553,7 +625,10 @@ class API
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      print(exc.runtimeType);
+      
+      print("EXCEPTION");
+      print("type: " + exc.runtimeType.toString());
+      print("messange: " + exc.message);
     }
     return null;
   }

@@ -1,4 +1,5 @@
 import 'package:mysql1/mysql1.dart';
+import 'package:password_hash/password_hash.dart';
 
 class DataBase {
   static DataBase _instance = new DataBase._init();

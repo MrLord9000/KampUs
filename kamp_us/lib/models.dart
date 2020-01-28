@@ -2,8 +2,9 @@ class AccountModel {
   int id;
   String email;
   String passwd;
+  String salt;
   String nickname;
-  AccountModel({this.id,this.email,this.passwd,this.nickname});
+  AccountModel({this.id,this.email,this.passwd,this.salt,this.nickname});
 }
 
 class LocationModel {
