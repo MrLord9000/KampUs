@@ -56,12 +56,22 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
 
     return SlidingUpPanel(
         renderPanelSheet: true,
-        minHeight: 80,
+        minHeight: MediaQuery.of(context).size.height / 7.8,
         color: Colors.grey[300],
         panel: Column(
           children: <Widget>[
             Column(
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 4),
+                  height: 6,
+                  width: 64,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(8)
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -72,6 +82,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                         child: Image.asset("images/category_panels/Entertainment_frame.png", 
                           color: Colors.grey,
                           colorBlendMode: _getBlendMode(Category.Entertainment),
+                          filterQuality: FilterQuality.high,
                           ),
                         onTap: () {_updateFilter(Category.Entertainment);},
                         ),
@@ -83,6 +94,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                           child: Image.asset("images/category_panels/University_frame.png",
                             color: Colors.grey,
                             colorBlendMode: _getBlendMode(Category.University),
+                            filterQuality: FilterQuality.high,
                           ),
                           onTap: () {_updateFilter(Category.University);},
                           )
@@ -94,6 +106,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                           child: Image.asset("images/category_panels/Dining_frame.png",
                             color: Colors.grey,
                             colorBlendMode: _getBlendMode(Category.Dining),
+                            filterQuality: FilterQuality.high,
                           ),
                           onTap: () {_updateFilter(Category.Dining);},
                           )
@@ -105,6 +118,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                           child: Image.asset("images/category_panels/Parking_frame.png",
                             color: Colors.grey,
                             colorBlendMode: _getBlendMode(Category.Parking),
+                            filterQuality: FilterQuality.high,
                           ),
                           onTap: () {_updateFilter(Category.Parking);},
                           )
@@ -116,6 +130,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                           child: Image.asset("images/category_panels/Emergency_frame.png",
                             color: Colors.grey,
                             colorBlendMode: _getBlendMode(Category.Emergency),
+                            filterQuality: FilterQuality.high,
                           ),
                           onTap: () {_updateFilter(Category.Emergency);},
                           )

@@ -162,6 +162,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
           ),
 
+          Container(
+            alignment: Alignment(0.0, 0.675),
+            child: FlatButton(
+              child: Text("Dodaj znacznik",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'CastleT',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18
+                ),
+              ),
+              onPressed: () {},
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Color.fromARGB(255, 76, 175, 80),
+              splashColor: Color.fromARGB(255, 89, 207, 94),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+            ),
+          ),
+
           CategoryTagPanel(
             onFilterChange: _updateMarkerFiltering,
           )
