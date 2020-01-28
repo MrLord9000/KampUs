@@ -160,22 +160,6 @@ class _MyLoginPage extends State<MyLoginPage> {
                       () => Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS'))),
                       wrongLoginData
                     );
-
-                    /*
-                      //Kod do sprawdzania czy udało się zalogować
-                    if (_emailController.text == 'email' && _passwordController.text == 'haslo')
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS')));
-                    else if(_emailController.text != 'email') {
-                      wrongLoginData('Nie ma takiego adresu');
-                    }
-                    else if (_passwordController != 'haslo') {
-                      wrongLoginData('Błędne hasło');
-                    }
-                    else {
-                      wrongLoginData('You missed it, uh oh');
-                    }
-                    */
-
                   },
                   child: Center(
                     child: Text('Zaloguj',

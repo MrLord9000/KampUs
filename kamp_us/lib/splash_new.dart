@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:kamp_us/home_page.dart';
 import 'package:kamp_us/login_page.dart';
+import 'package:kamp_us/api.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreenNew extends StatefulWidget {
@@ -14,7 +16,15 @@ class _SplashScreenStateNew extends State<SplashScreenNew> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () => Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoginPage(title: 'KampUS'))));
+    Timer(Duration(seconds: 3), () async{
+      //Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoginPage(title: 'KampUS')));
+      await API.LogInFromSafeStorage(
+        () => Navigator.push(_context,MaterialPageRoute(builder: (_context) => MyHomePage(title: 'KampUS'))),
+        (x) => { print("Auto LogIn failed: " + x ), Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoginPage(title: 'KampUS')))}
+      );
+    }
+    
+    );
   }
 
   @override

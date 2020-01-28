@@ -11,28 +11,28 @@ import 'package:kamp_us/view_models/location.dart';
 
 class API
 {
+  static const ER_BAD_FIELD_ERROR = 1054;
   static const ER_DUP_ENTRY = 1062;
   static const ER_NO_SUCH_TABLE = 1146;
-  static const ER_BAD_FIELD_ERROR = 1054;
 
-  static final storage = new FlutterSecureStorage();
+  static final _storage = new FlutterSecureStorage();
 
   static PBKDF2 _passwdGenerator = new PBKDF2();
   static AccountModel _accountNoPass;
   
   static get currentUserAsync async {
-    var storedData = await storage.readAll();
+    var storedData = await _storage.readAll();
 
     if( storedData["remember"] == "true" ) {
         return new AccountModel(
         id: int.parse( storedData["id"] ),
         email: storedData["email"],
         passwd: storedData["passwd"],
+        salt: storedData["salt"],
         nickname: storedData["nickName"]
       );
     }
     else {
-      print("else");
       return null;
     }
   }
@@ -40,13 +40,14 @@ class API
   static get currentUserNoPass => _accountNoPass;
 
   static saveUser(AccountModel acc) async {
-    var op1 = storage.write(key: "remember", value: "true");
-    var op2 = storage.write(key: "id", value: acc.id.toString() );
-    var op3 = storage.write(key: "email", value: acc.email );
-    var op4 = storage.write(key: "passwd", value: acc.passwd );
-    var op5 = storage.write(key: "nickName", value: acc.nickname);
+    var op1 = _storage.write(key: "remember", value: "true");
+    var op2 = _storage.write(key: "id", value: acc.id.toString() );
+    var op3 = _storage.write(key: "email", value: acc.email );
+    var op4 = _storage.write(key: "passwd", value: acc.passwd );
+    var op5 = _storage.write(key: "salt", value: acc.salt );
+    var op6 = _storage.write(key: "nickName", value: acc.nickname);
     _accountNoPass = new AccountModel( id: acc.id, email: acc.email, nickname: acc.nickname);
-    await op1; await op2; await op3; await op4; await op5;
+    await op1; await op2; await op3; await op4; await op5; await op6;
   }
 
   static String _unknownErrorLog( String errorLog ) {
@@ -102,6 +103,7 @@ class API
     if ( fromDB.passwd == encrypted ) {
       // Good password
       print("Login ok");
+      fromDB.passwd = acc.passwd;
       await saveUser(fromDB);
       ifSuccess();
     }
@@ -111,14 +113,33 @@ class API
     }
   }
 
+  static LogInFromSafeStorage( Function ifSuccess, Function ifFailure ) async {
+    
+    print("trying to log");
+    
+    var acc = await currentUserAsync;
+
+    
+    print("storage ok");
+    if( acc != null ) {
+      logIn(acc, ifSuccess, ifFailure);
+      print("data in storage");
+    }
+    else {
+      ifFailure("No stored user");
+      print("storage empty");
+    }
+  }
+
   static logOut() async {    
-    var op1 = storage.write(key: "remember", value: "false");
-    var op2 = storage.delete(key: "id");
-    var op3 = storage.delete(key: "email");
-    var op4 = storage.delete(key: "passwd");
-    var op5 = storage.delete(key: "nickName");
+    var op1 = _storage.write(key: "remember", value: "false");
+    var op2 = _storage.delete(key: "id");
+    var op3 = _storage.delete(key: "email");
+    var op4 = _storage.delete(key: "passwd");
+    var op5 = _storage.delete(key: "salt");
+    var op6 = _storage.delete(key: "nickName");
     _accountNoPass = null;
-    await op1; await op2; await op3; await op4; await op5;
+    await op1; await op2; await op3; await op4; await op5; await op6;
   }
 
   static createAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {

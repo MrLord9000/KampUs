@@ -58,7 +58,7 @@ class SideMenu extends StatelessWidget {
                       fontSize: 48.0,
                     )
                   ),
-                  Text('Nazwa użytkownika',
+                  Text(API.currentUserNoPass?.nickname ?? "Not logged in",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20
