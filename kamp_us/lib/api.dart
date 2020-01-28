@@ -20,6 +20,16 @@ class API
   static PBKDF2 _passwdGenerator = new PBKDF2();
   static AccountModel _accountNoPass;
   
+  static String _unknownErrorLog( String errorLog ) {
+    return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
+  }
+
+  static _exceptionDebug(exc){
+    print("EXCEPTION");
+    print("type: " + exc.runtimeType.toString());
+    print("messange: " + exc.message);
+  }
+
   static get currentUserAsync async {
     var storedData = await _storage.readAll();
 
@@ -50,10 +60,6 @@ class API
     await op1; await op2; await op3; await op4; await op5; await op6;
   }
 
-  static String _unknownErrorLog( String errorLog ) {
-    return "Wystąpił nieznany błąd: " + errorLog + ", proszę skontaktować się z administratorem";
-  }
-
   // By id or email
   static Future<AccountModel> loadAccount( AccountModel acc, Function ifSuccess, Function ifFailure ) async {
     try
@@ -81,16 +87,13 @@ class API
         );
       }
     }    
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -113,7 +116,7 @@ class API
     }
   }
 
-  static LogInFromSafeStorage( Function ifSuccess, Function ifFailure ) async {
+  static logInFromSafeStorage( Function ifSuccess, Function ifFailure ) async {
     
     print("trying to log");
     
@@ -167,18 +170,14 @@ class API
           break;
       }
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
-
   }
 
   // by id
@@ -239,16 +238,13 @@ class API
         return loc;       
       }
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -266,16 +262,13 @@ class API
       }
       return locs;
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -294,16 +287,13 @@ class API
       } 
       return list;
     }    
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -323,16 +313,13 @@ class API
       } 
       return list;
     }    
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -350,16 +337,13 @@ class API
       } 
       return list;
     }    
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -378,16 +362,13 @@ class API
 
       return list;
     }    
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
@@ -409,16 +390,13 @@ class API
         ]
       );
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -434,7 +412,7 @@ class API
       }      
       int userID = (await API.currentUserAsync).id;
       loc.id = (await DataBase().query("SELECT MAX(id) FROM locations",[])).first[0]+1;
-      var location =  DataBase().query(
+      await DataBase().query(
         "INSERT INTO `locations`(`id`,`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?,?)", [
           loc.id,
           userID,
@@ -452,16 +430,13 @@ class API
 
       ifSuccess();
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -473,22 +448,16 @@ class API
       Future q2 = DataBase().query( "DELETE FROM loc_tag WHERE loc_id = ?", [loc.id] );
       Future q3 = DataBase().query( "DELETE FROM comments WHERE loc_id = ?", [loc.id] );
       Future q4 = DataBase().query( "DELETE FROM thumbs WHERE loc_id = ?", [loc.id] );
-      await q1;
-      await q2;
-      await q3;
-      await q4;
+      await q1; await q2; await q3; await q4;
       ifSuccess();
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -504,21 +473,15 @@ class API
     on MySqlException catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -539,23 +502,17 @@ class API
           break;
         default:
           ifFailure(_unknownErrorLog(exc.toString()));
-          
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+          _exceptionDebug(exc);
           break;
       }
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -566,16 +523,13 @@ class API
       await DataBase().query( "DELETE FROM comments WHERE id = ?", [com.id] );
       ifSuccess();
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -586,16 +540,13 @@ class API
       await DataBase().query( "DELETE FROM thumbs WHERE id = ?", [thumb.id] );
       ifSuccess();
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -605,7 +556,7 @@ class API
       await DataBase().query( "INSERT INTO tags (tag) VALUES (?)", [tag] );
       ifSuccess();
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     on MySqlException catch(exc){
@@ -615,20 +566,14 @@ class API
       }
       else{
         ifFailure(_unknownErrorLog(exc.toString()));
-        
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+        _exceptionDebug(exc);
       }
 
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
   }
 
@@ -640,16 +585,13 @@ class API
       ifSuccess();
       return model;
     }
-    on SocketException catch(exc) {
+    on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
     }
     catch(exc)
     {
       ifFailure(_unknownErrorLog(exc.toString()));
-      
-      print("EXCEPTION");
-      print("type: " + exc.runtimeType.toString());
-      print("messange: " + exc.message);
+      _exceptionDebug(exc);
     }
     return null;
   }
