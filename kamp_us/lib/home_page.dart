@@ -24,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Map<String, Marker> _markers = {};
   List<Location> locations;
   Category _filterCategory = Category.Other;
+  LatLng _newMarkerCoords;
   Marker _newMarker;
   final MarkerId newMarkerId = MarkerId("new_marker");
   GoogleMapController mapController;
@@ -100,7 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _onCreateMarker(LatLng latLng) async {
+  _onChangeNewMarkerPosition(LatLng latLng) {
+    _newMarkerCoords = latLng;
     _newMarker = Marker(
       markerId: newMarkerId,
       position: latLng,
@@ -119,6 +121,15 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _markers["new_marker"] = _newMarker;
     });
+  }
+
+  _onCreateMarker() {
+    
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => AddMarkerPage(latLng: _newMarkerCoords),
+      )
+    );
+
   }
 
   @override
@@ -145,8 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
           GoogleMap(
             onMapCreated: _onMapCreated,
             onCameraIdle: _getScreenLocations,
-            onTap: _onCreateMarker,
-            onLongPress: _onCreateMarker,
+            onTap: _onChangeNewMarkerPosition,
+            onLongPress: _onChangeNewMarkerPosition,
             
             initialCameraPosition: CameraPosition(
               target: LatLng(_center.latitude, _center.longitude),
@@ -160,24 +171,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
           ),
 
-          Container(
-            alignment: Alignment(0.0, 0.675),
-            child: FlatButton(
-              child: Text("Dodaj znacznik",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'CastleT',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18
+          if (_newMarker != null)
+          {
+            Container(
+              alignment: Alignment(0.0, 0.675),
+              child: FlatButton(
+                child: Text("Dodaj znacznik",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'CastleT',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18
+                  ),
                 ),
+                onPressed: _onCreateMarker,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: Color.fromARGB(255, 76, 175, 80),
+                splashColor: Color.fromARGB(255, 89, 207, 94),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
               ),
-              onPressed: () {},
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: Color.fromARGB(255, 76, 175, 80),
-              splashColor: Color.fromARGB(255, 89, 207, 94),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-            ),
-          ),
+            )
+          }.elementAt(0),
 
           CategoryTagPanel(
             onFilterChange: _updateMarkerFiltering,
