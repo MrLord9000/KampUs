@@ -15,6 +15,8 @@ enum Category {
 class CategoryIcon {
   static CategoryIcon _instance = CategoryIcon._init();
 
+  static BuildContext _context;
+
   BitmapDescriptor _entertainmentIcon;
   BitmapDescriptor _universityIcon;
   BitmapDescriptor _diningIcon;
@@ -31,7 +33,8 @@ class CategoryIcon {
   BitmapDescriptor get otherIcon => _otherIcon;
   BitmapDescriptor get newIcon => _newIcon;
 
-  factory CategoryIcon() {
+  factory CategoryIcon(BuildContext context) {
+    _context = context;
     return _instance;
   }
 
@@ -67,13 +70,33 @@ class CategoryIcon {
   }
 
   _populate() async {
-    _entertainmentIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Entertainment_icon.png");
-    _universityIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/University_icon.png");
-    _diningIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Dining_icon.png");
-    _parkingIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Parking_icon.png");
-    _emergencyIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Emergency_icon.png");
-    _otherIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/Unknown_icon.png");
-    _newIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "images/New_icon.png");
+    MediaQueryData data = MediaQuery.of(_context);
+    double ratio = data.devicePixelRatio;
+    
+
+    _entertainmentIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "Entertainment_icon.png", ratio));
+    _universityIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "University_icon.png", ratio));
+    _diningIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "Dining_icon.png", ratio));
+    _parkingIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "Parking_icon.png", ratio));
+    _emergencyIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "Emergency_icon.png", ratio));
+    _otherIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "Unknown_icon.png", ratio));
+    _newIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), imageDir("images/map_icons", "New_icon.png", ratio));
+  }
+
+  String imageDir(String prefix, String fileName, double pixelRatio) {
+    String directory = '/1.0x/';
+
+    if (pixelRatio >= 1.5) {
+        directory = '/2.0x/';
+    }
+    else if (pixelRatio >= 2.5) {
+        directory = '/3.0x/';
+    }
+    else if (pixelRatio >= 3.5) {
+        directory = '/4.0x/';
+    }
+    
+    return '$prefix$directory$fileName';
   }
 }
 

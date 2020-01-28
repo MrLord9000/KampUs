@@ -75,22 +75,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
                       Expanded(
                         child: Stack(
-                        children: <Widget>[ Container(
-                          alignment: Alignment(-0.3, -0.5),
-                          child: Text(
-                            "Kamp", 
-                            style: TextStyle(fontSize: 78, color: Theme.of(context).accentColor)
-                            )
-                          ),
-                          Container(
-                            alignment: Alignment(0.4, 0.2),
+                          children: <Widget>[ Container(
+                            alignment: Alignment(-0.3, -0.5),
                             child: Text(
-                            "US",
-                            style: TextStyle(fontSize: 120, fontWeight: FontWeight.bold, color: Theme.of(context).accentColor)
+                              "Kamp", 
+                              style: TextStyle(fontSize: 78, color: Theme.of(context).accentColor)
+                              )
+                            ),
+                            Container(
+                              alignment: Alignment(0.4, 0.2),
+                              child: Text(
+                              "US",
+                              style: TextStyle(fontSize: 120, fontWeight: FontWeight.bold, color: Theme.of(context).accentColor)
+                              )
                             )
-                          )
-                        ]
-                      ))
+                          ]
+                        )
+                      )
 
                     ],
                   )

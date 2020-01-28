@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       final marker = Marker(
         markerId: MarkerId(location.id.toString()),
         position: LatLng(location.latitude, location.longitude),
-        icon: CategoryIcon().iconFromCategory(location.category),
+        icon: CategoryIcon(context).iconFromCategory(location.category),
         infoWindow: InfoWindow(
             title: location.name,
             snippet: "Dotknij aby zobaczyć szczegóły",
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _newMarker = Marker(
       markerId: newMarkerId,
       position: latLng,
-      icon: CategoryIcon().newIcon,
+      icon: CategoryIcon(context).newIcon,
       infoWindow: InfoWindow(
         title: "Utwórz nowy znacznik",
         snippet: "Dotknij aby kontynuować",
