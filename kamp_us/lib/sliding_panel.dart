@@ -144,26 +144,29 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                 child: Wrap(
                   children: <Widget>[
                     for (int i = 0; i < tags.length; i++)
-                      Container(
-                          padding: EdgeInsets.all(5.0),
-                          margin: EdgeInsets.all(5.0),
-                          alignment: Alignment.center,
-                          height: 30.0,
-                          width: MediaQuery.of(context).size.width / 4,
-                          child: Material(
-                              borderRadius: BorderRadius.horizontal(),
-                              elevation: 10.0,
-                              color: Colors.redAccent,
-                                child: InkWell(
-                                  onTap: () {
-                                    //Tutaj wybierz tag czy co
-                                    print(tags.elementAt(i).tag);
-                                  },
-                                  child: Text(tags.elementAt(i).tag,
-                                      textAlign: TextAlign.center),
-                              )
+                    Container(
+                      padding: EdgeInsets.all(2),
+                      child: Material(
+                          borderRadius: BorderRadius.circular(8),
+                          elevation: 4.0,
+                          color: Theme.of(context).primaryColor,
+                          child:InkWell(
+                            onTap: () {
+                                  //Tutaj wybierz tag czy co
+                                  print(tags.elementAt(i).tag);
+                                },
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 30.0,
+                              width: MediaQuery.of(context).size.width / 3.2,
+                              child: Text(tags.elementAt(i).tag,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white, fontSize: 16),),
+                              
                           ),
+                        )
                       )
+                    )
                   ],
                 )
             ),
