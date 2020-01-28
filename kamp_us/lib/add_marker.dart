@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'api.dart';
 import 'view_models/location.dart';
 
@@ -33,6 +32,7 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
       ), 
       () {print("Added location successfully");}, 
       (String msg) {print(msg);});
+    Navigator.pop(context);
   }
 
   void _onCategoryChanged(Category value) {
