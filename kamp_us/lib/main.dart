@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'KampUs',
       theme: ThemeData(
 
-        primaryColor: Color.fromARGB(255, 139, 0, 2),
+        primaryColor: Color.fromARGB(255, 139, 35, 29),
         accentColor: Color.fromARGB(255, 174, 175, 179),
         primaryColorDark: Color.fromARGB(255, 27, 28, 32),
 

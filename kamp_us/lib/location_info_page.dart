@@ -17,7 +17,7 @@ class _LocationInfoPageState extends State<LocationInfoPage>
   Widget build(BuildContext context) {
     
     return Scaffold(
-      
+      resizeToAvoidBottomInset: false,
       // Simple app bar with title
       appBar: AppBar(
         centerTitle: true,

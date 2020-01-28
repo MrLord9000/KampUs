@@ -96,6 +96,7 @@ class _MyLoginPage extends State<MyLoginPage> {
   Widget build (BuildContext context) {
 
     return Scaffold (
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,

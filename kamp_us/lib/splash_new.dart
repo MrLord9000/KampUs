@@ -27,12 +27,14 @@ class _SplashScreenStateNew extends State<SplashScreenNew> {
 
           // ---- Background -------------------------------------
           Container(
-            child: Image.asset(
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            child: SafeArea(
+              child: Image.asset(
               "images/Home_screen.png",
               alignment: Alignment.topCenter,
               fit: BoxFit.fitHeight,
               filterQuality: FilterQuality.high,
-              ),
+              ),)
           ),
 
           Container(

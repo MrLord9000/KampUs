@@ -45,6 +45,7 @@ class _AddMarkerPageState extends State<AddMarkerPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text("Dodaj znacznik"),
       ),

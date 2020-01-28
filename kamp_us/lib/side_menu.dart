@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'api.dart';
+
 class SideMenu extends StatelessWidget {
 
   void openPageUstawienia(BuildContext context) {
@@ -20,19 +22,21 @@ class SideMenu extends StatelessWidget {
     ));
   }
 
-  void openPageUlubione(BuildContext context) {
+  void openPageCredits(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Ulubione'),
+            title: const Text('Twórcy'),
           ),
-          body: const Center(
-            child: Text(
-              'Tutaj beda ulubione lokacje',
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text("Jakub Guzek", style: TextStyle(fontSize: 26), textAlign: TextAlign.center,),
+              Text("Filip Mazurek", style: TextStyle(fontSize: 26), textAlign: TextAlign.center,),
+              Text("Andrzej Miszczak", style: TextStyle(fontSize: 26), textAlign: TextAlign.center,)
+            ],
+          )
         );
       },
     ));
@@ -45,11 +49,23 @@ class SideMenu extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text('KampUs',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 30.0,
-              )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('KampUs',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 48.0,
+                    )
+                  ),
+                  Text('Nazwa użytkownika',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20
+                    ),
+                  )
+                ],
+              ),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
               ),
@@ -62,11 +78,15 @@ class SideMenu extends StatelessWidget {
                 }
             ),
             ListTile(
-              title: Text('Ulubione'),
+              title: Text('Twórcy'),
               onTap: () {
-                openPageUlubione(context);
-              },
+                openPageCredits(context);
+              }
             ),
+            ListTile(
+              title: Text('Wyloguj'),
+              // TODO: @ANDRZEJ dodaj tu wylogowanie na OnTap
+            )
 
           ],
         ),

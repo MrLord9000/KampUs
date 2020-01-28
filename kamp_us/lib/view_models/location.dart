@@ -85,7 +85,7 @@ class CategoryIcon {
 
   String imageDir(String prefix, String fileName, double pixelRatio) {
     String directory = '/1.0x/';
-
+    //xd
     if (pixelRatio >= 1.5) {
         directory = '/2.0x/';
     }
