@@ -3,9 +3,12 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'api.dart';
 import 'models.dart';
+import 'view_models/location.dart';
 
 class CategoryTagPanel extends StatefulWidget {
-  CategoryTagPanel({Key key}) : super(key: key);
+  CategoryTagPanel({Key key, this.onFilterChange}) : super(key: key);
+
+  final Function(Category) onFilterChange;
 
   @override
   _CategoryTagStatus createState() => _CategoryTagStatus();
@@ -13,9 +16,38 @@ class CategoryTagPanel extends StatefulWidget {
 
 class _CategoryTagStatus extends State<CategoryTagPanel> {
   List<TagModel> tags = new List<TagModel>();
+  Category selectedFilter = Category.Other;
+
+  _updateFilter(Category category) {
+    if (selectedFilter == category)
+    {
+      widget.onFilterChange(Category.Other);
+      setState(() {
+        selectedFilter = Category.Other;
+      });
+    }
+    else
+    {
+      widget.onFilterChange(category);
+      setState(() {
+        selectedFilter = category;
+      });
+    }
+  }
 
   _onStartLoadTags() async {
     tags = await API.loadAllTags(() => {print('sukces')}, (x) => {print(x)});
+  }
+
+  BlendMode _getBlendMode(Category category) {
+    if (selectedFilter == category || selectedFilter == Category.Other)
+    {
+      return BlendMode.dst;
+    }
+    else
+    {
+      return BlendMode.modulate;
+    }
   }
 
   @override
@@ -24,6 +56,8 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
 
     return SlidingUpPanel(
         renderPanelSheet: true,
+        minHeight: 80,
+        color: Colors.grey[300],
         panel: Column(
           children: <Widget>[
             Column(
@@ -33,75 +67,59 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.all(4.0),
-                      height: 100.0,
                       width: MediaQuery.of(context).size.width / 6,
-                      child: Material(
-                        borderRadius: BorderRadius.all(Radius.circular(2)),
-                        color: Colors.blue,
-                        child: GestureDetector(
-                          onTap: () {
-                            print('blue');
-                            //Wybierz marker niebieski
-                          },
+                      child: GestureDetector(
+                        child: Image.asset("images/category_panels/Entertainment_frame.png", 
+                          color: Colors.grey,
+                          colorBlendMode: _getBlendMode(Category.Entertainment),
+                          ),
+                        onTap: () {_updateFilter(Category.Entertainment);},
                         ),
-                      ),
                     ),
                     Container(
                         padding: EdgeInsets.all(4.0),
-                        height: 100.0,
                         width: MediaQuery.of(context).size.width / 6,
-                        child: Material(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                          color: Colors.red,
-                          child: GestureDetector(
-                            onTap: () {
-                              print('red');
-                              //Wybierz marker czerwony
-                            },
+                        child: GestureDetector(
+                          child: Image.asset("images/category_panels/University_frame.png",
+                            color: Colors.grey,
+                            colorBlendMode: _getBlendMode(Category.University),
                           ),
-                        )),
+                          onTap: () {_updateFilter(Category.University);},
+                          )
+                        ),
                     Container(
                         padding: EdgeInsets.all(4.0),
-                        height: 100.0,
                         width: MediaQuery.of(context).size.width / 6,
-                        child: Material(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                          color: Colors.yellow,
-                          child: GestureDetector(
-                            onTap: () {
-                              print('yellow');
-                              //Wybierz marker żółty
-                            },
+                        child: GestureDetector(
+                          child: Image.asset("images/category_panels/Dining_frame.png",
+                            color: Colors.grey,
+                            colorBlendMode: _getBlendMode(Category.Dining),
                           ),
-                        )),
+                          onTap: () {_updateFilter(Category.Dining);},
+                          )
+                        ),
                     Container(
                         padding: EdgeInsets.all(4.0),
-                        height: 100.0,
                         width: MediaQuery.of(context).size.width / 6,
-                        child: Material(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                          color: Colors.green,
-                          child: GestureDetector(
-                            onTap: () {
-                              print('zielony');
-                              //Wybierz marker zielony
-                            },
+                        child: GestureDetector(
+                          child: Image.asset("images/category_panels/Parking_frame.png",
+                            color: Colors.grey,
+                            colorBlendMode: _getBlendMode(Category.Parking),
                           ),
-                        )),
+                          onTap: () {_updateFilter(Category.Parking);},
+                          )
+                        ),
                     Container(
                         padding: EdgeInsets.all(4.0),
-                        height: 100.0,
                         width: MediaQuery.of(context).size.width / 6,
-                        child: Material(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                          color: Colors.purple,
-                          child: GestureDetector(
-                            onTap: () {
-                              print('purple');
-                              //Wybierz marker fioletowy
-                            },
+                        child: GestureDetector(
+                          child: Image.asset("images/category_panels/Emergency_frame.png",
+                            color: Colors.grey,
+                            colorBlendMode: _getBlendMode(Category.Emergency),
                           ),
-                        )),
+                          onTap: () {_updateFilter(Category.Emergency);},
+                          )
+                        ),
                   ],
                 ),
               ],

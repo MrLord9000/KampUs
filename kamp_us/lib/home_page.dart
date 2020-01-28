@@ -24,22 +24,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final Map<String, Marker> _markers = {};
+  List<Location> locations;
+  Category _filterCategory = Category.Other;
   Marker _newMarker;
   final MarkerId newMarkerId = MarkerId("new_marker");
   GoogleMapController mapController;
   Position _center = Position(latitude: 51.753710, longitude: 19.451742);
   double _zoom = 14.0;
 
+  _updateMarkerFiltering(Category category) {
+    _filterCategory = category;
+    _updateScreenMarkers();
+  }
+
   _onMapCreated(GoogleMapController controller) {
     mapController = controller;
     // Here you should retrieve all the markers from screen you're currently on
-    _getScreenMarkers();
+    _getScreenLocations();
   }
 
-  _getScreenMarkers() async {
+  _getScreenLocations() async {
     LatLngBounds screenBounds = await mapController.getVisibleRegion();
     // Get screen markers depending on screen coordinates
-    List<Location> locations = await API.loadLocationsInRange(
+    locations = await API.loadLocationsInRange(
       screenBounds.southwest.longitude, 
       screenBounds.northeast.longitude, 
       screenBounds.southwest.latitude, 
@@ -55,29 +62,35 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         );
       });
+      _updateScreenMarkers();
+  }
 
+  _updateScreenMarkers() {
     _markers.clear();
 
     for (var location in locations)
     {
-      final marker = Marker(
-        markerId: MarkerId(location.id.toString()),
-        position: LatLng(location.latitude, location.longitude),
-        icon: CategoryIcon(context).iconFromCategory(location.category),
-        infoWindow: InfoWindow(
-            title: location.name,
-            snippet: "Dotknij aby zobaczyć szczegóły",
-            onTap: () {
-              Navigator.push(
-                context, 
-                MaterialPageRoute(
-                  builder: (context) => LocationInfoPage(location: location)
-                  )
-              );
-            },
-          ),
-      );
-      _markers[location.id.toString()] = marker;
+      if (_filterCategory == Category.Other || location.category == _filterCategory)
+      {
+        final marker = Marker(
+          markerId: MarkerId(location.id.toString()),
+          position: LatLng(location.latitude, location.longitude),
+          icon: CategoryIcon(context).iconFromCategory(location.category),
+          infoWindow: InfoWindow(
+              title: location.name,
+              snippet: "Dotknij aby zobaczyć szczegóły",
+              onTap: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (context) => LocationInfoPage(location: location)
+                    )
+                );
+              },
+            ),
+        );
+        _markers[location.id.toString()] = marker;
+      }
     }
     setState(() {});
 
@@ -133,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           GoogleMap(
             onMapCreated: _onMapCreated,
-            onCameraIdle: _getScreenMarkers,
+            onCameraIdle: _getScreenLocations,
             onTap: _onCreateMarker,
             onLongPress: _onCreateMarker,
             
@@ -149,7 +162,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
           ),
 
-          CategoryTagPanel()
+          CategoryTagPanel(
+            onFilterChange: _updateMarkerFiltering,
+          )
         ],
       ),
 

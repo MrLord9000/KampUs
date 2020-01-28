@@ -89,6 +89,11 @@ flutter:
     - images/map_icons/4.0x/Unknown_icon.png
     - images/map_icons/4.0x/New_icon.png
     - images/Home_screen.png
+    - images/category_panels/Dining_frame.png
+    - images/category_panels/Entertainment_frame.png
+    - images/category_panels/University_frame.png
+    - images/category_panels/Parking_frame.png
+    - images/category_panels/Emergency_frame.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
