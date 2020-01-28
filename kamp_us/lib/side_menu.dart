@@ -85,7 +85,12 @@ class SideMenu extends StatelessWidget {
             ),
             ListTile(
               title: Text('Wyloguj'),
-              // TODO: @ANDRZEJ dodaj tu wylogowanie na OnTap
+              onTap: () async {
+                await API.logOut();
+                print(API.currentUserNoPass?.nickname ?? "logged out");
+                //TODO nie wraca
+                Navigator.pop(context);
+              },
             )
 
           ],
