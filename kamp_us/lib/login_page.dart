@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kamp_us/home_page.dart';
 import 'package:kamp_us/models.dart';
@@ -15,6 +17,8 @@ class _MyLoginPage extends State<MyLoginPage> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool loginButtonActive = false;
+  bool registerButtonActive = false;
 
   void wrongLoginData(String string) {
     showDialog(context: context,
@@ -61,7 +65,7 @@ class _MyLoginPage extends State<MyLoginPage> {
                     borderRadius: BorderRadius.horizontal(),
                     color: Color.fromARGB(255, 139, 0, 2),
                     elevation: 10.0,
-                    child: GestureDetector(
+                    child: InkWell(
                         onTap: () {
                           //Kod do sprawdzania czy udało się zalogować
                           wrongLoginData("Dziękujemy za zgłoszenie, instrukcje będą wysłane na adres email");
@@ -93,8 +97,10 @@ class _MyLoginPage extends State<MyLoginPage> {
     super.dispose();
   }
 
-  Widget build (BuildContext context) {
+  Color registerColor = Color.fromARGB(255, 27, 28, 32);
+  Color loginColor = Color.fromARGB(255, 139, 0, 2);
 
+  Widget build (BuildContext context) {
     return Scaffold (
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -144,59 +150,45 @@ class _MyLoginPage extends State<MyLoginPage> {
             SizedBox(height: 30.0),
             Container (
               height: 40.0,
-              alignment: Alignment.centerRight,
-              child: Material(
-                borderRadius: BorderRadius.horizontal(),
-                color: Color.fromARGB(255, 139, 0, 2),
-                elevation: 10.0,
-                child: GestureDetector(
-                  onTap: () {
-                    var account = AccountModel(
-                      email: _emailController.text,
-                      passwd: _passwordController.text,
-                    );
-                    API.logIn(
-                      account,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS'))),
-                      wrongLoginData
-                    );
+              alignment: Alignment.center,
+                child: Material(
+                    borderRadius: BorderRadius.horizontal(),
+                    color: loginColor,
+                    elevation: 10.0,
+                    child: InkWell(
+                        onTap: () {
 
-                    /*
-                      //Kod do sprawdzania czy udało się zalogować
-                    if (_emailController.text == 'email' && _passwordController.text == 'haslo')
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS')));
-                    else if(_emailController.text != 'email') {
-                      wrongLoginData('Nie ma takiego adresu');
-                    }
-                    else if (_passwordController != 'haslo') {
-                      wrongLoginData('Błędne hasło');
-                    }
-                    else {
-                      wrongLoginData('You missed it, uh oh');
-                    }
-                    */
+                          var account = AccountModel(
+                            email: _emailController.text,
+                            passwd: _passwordController.text,
+                          );
+                          API.logIn(
+                              account,
+                                  () => Navigator.push(context, MaterialPageRoute(builder: (context) =>MyHomePage(title: 'KampUS'))),
+                              wrongLoginData
+                          );
+                        },
+                        child: Center(
+                          child: Text('Zaloguj',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        )
+                    ),
 
-                  },
-                  child: Center(
-                    child: Text('Zaloguj',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                        ),
-                      ),
-                    )
-                  ),
+                )
 
-                ),
               ),
             SizedBox(height: 20.0),
             Container(
               height: 30.0,
               child: Material(
                 borderRadius: BorderRadius.horizontal(),
-                color: Color.fromARGB(255, 27, 28, 32),
+                color: registerColor,
                 elevation: 10.0,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     //Kod
                     Navigator.push(context, MaterialPageRoute(builder: (context) =>MyRegisterPage(title: 'KampUS')));

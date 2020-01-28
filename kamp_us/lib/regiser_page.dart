@@ -74,7 +74,7 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                 borderRadius: BorderRadius.horizontal(),
                 color: Color.fromARGB(255, 139, 0, 2),
                 elevation: 10.0,
-                child: GestureDetector(
+                child: InkWell(
                     onTap: () async {
 
                     var account;
