@@ -11,6 +11,8 @@ import 'package:kamp_us/view_models/location.dart';
 
 class API
 {
+  static const int THUMBS_TO_VERIFY = 10;
+
   static const ER_BAD_FIELD_ERROR = 1054;
   static const ER_DUP_ENTRY = 1062;
   static const ER_NO_SUCH_TABLE = 1146;
@@ -584,6 +586,28 @@ class API
       var model = TagModel( id: result.first[0], tag: tag );
       ifSuccess();
       return model;
+    }
+    on SocketException {
+      ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
+    }
+    catch(exc)
+    {
+      ifFailure(_unknownErrorLog(exc.toString()));
+      _exceptionDebug(exc);
+    }
+    return null;
+  }
+
+  static Future<bool> verifyLocation(Location loc, Function ifSuccess, Function ifFailure) async {
+    try
+    {
+      await DataBase().query( 
+        "UPDATE `locations` SET `verified`= (SELECT COUNT(*) FROM `thumbs` WHERE `loc_id` = ?) >= ? WHERE `id` = ?", 
+        [loc.id,THUMBS_TO_VERIFY,loc.id]
+      );
+      Results result = await DataBase().query( "SELECT verified FROM locations WHERE id=?", [loc.id]);
+      ifSuccess();
+      return result.first[0] > 0;
     }
     on SocketException {
       ifFailure("Nie udało się połączyć z bazą danych, sprawdź połączenie internetowe");      
