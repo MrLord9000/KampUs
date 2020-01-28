@@ -5,8 +5,6 @@ import 'package:kamp_us/api.dart';
 import 'add_marker.dart';
 import 'location_info_page.dart';
 import 'side_menu.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:kamp_us/models.dart';
 
 import 'sliding_panel.dart';
 import 'view_models/location.dart';

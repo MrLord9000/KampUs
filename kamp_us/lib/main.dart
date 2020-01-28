@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kamp_us/splash.dart';
 import 'package:kamp_us/splash_new.dart';
 
 void main() => runApp(MyApp());
