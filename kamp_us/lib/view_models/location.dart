@@ -89,10 +89,10 @@ class CategoryIcon {
     if (pixelRatio >= 1.5) {
         directory = '/2.0x/';
     }
-    else if (pixelRatio >= 2.5) {
+    if (pixelRatio >= 2.5) {
         directory = '/3.0x/';
     }
-    else if (pixelRatio >= 3.5) {
+    if (pixelRatio >= 3.5) {
         directory = '/4.0x/';
     }
     
