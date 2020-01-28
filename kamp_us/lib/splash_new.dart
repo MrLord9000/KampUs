@@ -18,7 +18,7 @@ class _SplashScreenStateNew extends State<SplashScreenNew> {
     super.initState();
     Timer(Duration(seconds: 3), () async{
       //Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoginPage(title: 'KampUS')));
-      await API.LogInFromSafeStorage(
+      await API.logInFromSafeStorage(
         () => Navigator.push(_context,MaterialPageRoute(builder: (_context) => MyHomePage(title: 'KampUS'))),
         (x) => { print("Auto LogIn failed: " + x ), Navigator.push(_context, MaterialPageRoute(builder: (_context) => MyLoginPage(title: 'KampUS')))}
       );
