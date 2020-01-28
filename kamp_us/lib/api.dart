@@ -18,8 +18,9 @@ class API
   static final storage = new FlutterSecureStorage();
 
   static PBKDF2 _passwdGenerator = new PBKDF2();
+  static AccountModel _accountNoPass;
   
-  static get currentUser async {
+  static get currentUserAsync async {
     var storedData = await storage.readAll();
 
     if( storedData["remember"] == "true" ) {
@@ -36,12 +37,15 @@ class API
     }
   }
 
+  static get currentUserNoPass => _accountNoPass;
+
   static saveUser(AccountModel acc) async {
     var op1 = storage.write(key: "remember", value: "true");
     var op2 = storage.write(key: "id", value: acc.id.toString() );
     var op3 = storage.write(key: "email", value: acc.email );
     var op4 = storage.write(key: "passwd", value: acc.passwd );
     var op5 = storage.write(key: "nickName", value: acc.nickname);
+    _accountNoPass = new AccountModel( id: acc.id, email: acc.email, nickname: acc.nickname);
     await op1; await op2; await op3; await op4; await op5;
   }
 
@@ -93,9 +97,6 @@ class API
   static logIn( AccountModel acc, Function ifSuccess, Function ifFailure ) async {        
     var fromDB = await loadAccount(acc, ifSuccess, ifFailure);
     // Eamil found in database
-
-    print("Salt from db:     "+fromDB.salt);
-    print("Passwd from db:   "+fromDB.passwd);
     String encrypted = _passwdGenerator.generateBase64Key(acc.passwd, fromDB.salt, 10, 256);
 
     if ( fromDB.passwd == encrypted ) {
@@ -116,6 +117,7 @@ class API
     var op3 = storage.delete(key: "email");
     var op4 = storage.delete(key: "passwd");
     var op5 = storage.delete(key: "nickName");
+    _accountNoPass = null;
     await op1; await op2; await op3; await op4; await op5;
   }
 
@@ -128,8 +130,6 @@ class API
         "INSERT INTO `accounts` (`email`,`password`,`salt`) VALUES (?,?,?)",
         [acc.email,passwd,salt]
       );
-      print("Generated saly:   "+salt);
-      print("Generated passwd: "+passwd);
       ifSuccess('Dziękujemy za rejestrację, link do aktywacji został wysłany na podany adres email');
     }
     on MySqlException catch(exc)
@@ -192,7 +192,7 @@ class API
             for (var tag in result) {
               tagsList.add(tag.tag)
             }
-          });
+        });
         
         await loadAcc;
         await loadThumbs;
@@ -411,7 +411,7 @@ class API
         futureTagModels.add( loadTag(tag, (){}, ifFailure) );
         print("xD");
       }      
-      int userID = (await API.currentUser).id;
+      int userID = (await API.currentUserAsync).id;
       loc.id = (await DataBase().query("SELECT MAX(id) FROM locations",[])).first[0]+1;
       var location =  DataBase().query(
         "INSERT INTO `locations`(`id`,`user_id`, `name`, `description`, `latitude`, `longitude`,`category`) VALUES (?,?,?,?,?,?,?)", [
