@@ -617,7 +617,7 @@ class API
       ifFailure(_unknownErrorLog(exc.toString()));
       _exceptionDebug(exc);
     }
-    return false;
+    return null;
   }
 
 }
