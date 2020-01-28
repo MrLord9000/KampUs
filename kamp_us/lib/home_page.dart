@@ -163,9 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(4.0),
                       height: 100.0,
-                      width: 75.0,
+                      width: MediaQuery.of(context).size.width/6,
                       child:  Material(
                         borderRadius: BorderRadius.all(Radius.circular(2)),
                         color: Colors.blue,
@@ -178,9 +178,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     Container(
-                        padding: EdgeInsets.all(10.0),
+                        padding: EdgeInsets.all(4.0),
                         height: 100.0,
-                        width: 75.0,
+                        width: MediaQuery.of(context).size.width/6,
                         child:  Material(
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                           color: Colors.red,
@@ -193,9 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                     ),
                     Container(
-                        padding: EdgeInsets.all(10.0),
+                        padding: EdgeInsets.all(4.0),
                         height: 100.0,
-                        width: 75.0,
+                        width: MediaQuery.of(context).size.width/6,
                         child:  Material(
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                           color: Colors.yellow,
@@ -208,9 +208,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                     ),
                     Container(
-                        padding: EdgeInsets.all(10.0),
+                        padding: EdgeInsets.all(4.0),
                         height: 100.0,
-                        width: 75.0,
+                        width: MediaQuery.of(context).size.width/6,
                         child:  Material(
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                           color: Colors.green,
@@ -223,9 +223,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                     ),
                     Container(
-                        padding: EdgeInsets.all(10.0),
+                        padding: EdgeInsets.all(4.0),
                         height: 100.0,
-                        width: 75.0,
+                        width: MediaQuery.of(context).size.width/6,
                         child:  Material(
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                           color: Colors.purple,
