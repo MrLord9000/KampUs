@@ -56,22 +56,9 @@ class _LocationInfoPageState extends State<LocationInfoPage>
   final _addCommentController = TextEditingController();
 
   int iloscLapek = 0;
-  List<AccountModel> accounts = new List<AccountModel>();
 
-  _loadNicknames() async {
-    for(CommentModel comment in widget.location.comments)
-      accounts.add(await API.loadAccount(new AccountModel(id: comment.userId), ()=>{print('sukces')}, (x) => {print(x)}));
-  }
-
-  bool complete = false;
   @override
   Widget build(BuildContext context) {
-    _loadNicknames().when((x)=>complete = true);
-    while(!complete){
-
-    }
-
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // Simple app bar with title
@@ -183,9 +170,6 @@ class _LocationInfoPageState extends State<LocationInfoPage>
                       for (int i = 0; i < widget.location.comments.length; i++)
                         Row (
                           children: <Widget>[
-                            Expanded(
-                              child: Text('Użytkownik: ' + accounts.elementAt(i).nickname),
-                            ),
                             Expanded(
                               child: Text(widget.location.comments.elementAt(i).text),
                             )
