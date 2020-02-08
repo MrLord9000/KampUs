@@ -78,6 +78,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                     Container(
                       padding: EdgeInsets.all(4.0),
                       width: MediaQuery.of(context).size.width / 6,
+                      height: 64,
                       child: GestureDetector(
                         child: Image.asset("images/category_panels/Entertainment_frame.png", 
                           color: Colors.grey,
@@ -90,6 +91,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                     Container(
                         padding: EdgeInsets.all(4.0),
                         width: MediaQuery.of(context).size.width / 6,
+                        height: 64,
                         child: GestureDetector(
                           child: Image.asset("images/category_panels/University_frame.png",
                             color: Colors.grey,
@@ -102,6 +104,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                     Container(
                         padding: EdgeInsets.all(4.0),
                         width: MediaQuery.of(context).size.width / 6,
+                        height: 64,
                         child: GestureDetector(
                           child: Image.asset("images/category_panels/Dining_frame.png",
                             color: Colors.grey,
@@ -114,6 +117,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                     Container(
                         padding: EdgeInsets.all(4.0),
                         width: MediaQuery.of(context).size.width / 6,
+                        height: 64,
                         child: GestureDetector(
                           child: Image.asset("images/category_panels/Parking_frame.png",
                             color: Colors.grey,
@@ -126,6 +130,7 @@ class _CategoryTagStatus extends State<CategoryTagPanel> {
                     Container(
                         padding: EdgeInsets.all(4.0),
                         width: MediaQuery.of(context).size.width / 6,
+                        height: 64,
                         child: GestureDetector(
                           child: Image.asset("images/category_panels/Emergency_frame.png",
                             color: Colors.grey,
